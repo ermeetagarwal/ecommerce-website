@@ -5,10 +5,9 @@ Agarwal Foods Web
 	For Images :- Image
 	For Title :- Title
 	For Description :- Description
-Post Data :- /api/home/ComponentName/
-Read Data :- /api/home/ComponentName/ 
+	Post Data :- /api/home/ComponentName/
+	Read Data :- /api/home/ComponentName/ 
 	To Delete :- /api/home/ComponentName/TitleName
-
 
 Home
 Carousel
