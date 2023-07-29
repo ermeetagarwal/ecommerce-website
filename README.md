@@ -1,2 +1,2 @@
 # ecommerce-website
-This repo is create for creating a website for agarwalfoods.co.inm
+This repo is create for creating a website for agarwalfoods.co.in
