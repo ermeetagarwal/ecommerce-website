@@ -4,14 +4,14 @@ const bodyParser = require('body-parser');
 const path = require("path");
 const mongoose = require('mongoose');
 
-const homeRouter = require("./routes/home");
+const homeRouter = require(path.join(__dirname,"./routes/home"));
 
 const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname,'public')));
 
-app.use('/',path.join(__dirname,homeRouter));
+app.use('/',homeRouter);
 
 mongoose.connect(process.env.DB_URL,{ useUnifiedTopology: true ,  useNewUrlParser:true});
 
