@@ -8,7 +8,7 @@ Agarwal Foods Web
 	Post Data :- /api/home/ComponentName/
 	Read Data :- /api/home/ComponentName/ 
 	To Delete :- /api/home/ComponentName/TitleName
-
+ 
 Home
 Carousel
 Category
