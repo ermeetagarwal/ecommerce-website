@@ -18,7 +18,6 @@ router.get("/api/home/:homecomp", function (req, res, next) {
 });
 
 router.post("/api/home/:homecomp", function (req, res, next) {
-    console.log("got request");
   const homeCompImg = req.body.Image;
   const homeCompTitle = req.body.Title;
   const homeCompDisc = req.body.Description;
@@ -29,11 +28,11 @@ router.post("/api/home/:homecomp", function (req, res, next) {
         const newhomecomponent = new Homecomponent({
           Title: homeCompTitle,
           imageUrl: homeCompImg,
-          Description: homeCompDisc,
+          Description: homeCompDisc
         });
         const newintro = new Intro({
           Title: routeTitle,
-          homecomponents: newhomecomponent,
+          homecomponents: newhomecomponent
         });
         newhomecomponent.save(function (err) {
           if (err) {
@@ -53,7 +52,7 @@ router.post("/api/home/:homecomp", function (req, res, next) {
         const newhomecomponent = new Homecomponent({
           Title: homeCompTitle,
           imageUrl: homeCompImg,
-          Descrption: homeCompDisc,
+          Description: homeCompDisc
         });
         newhomecomponent.save(function (err) {
           if (err) {
