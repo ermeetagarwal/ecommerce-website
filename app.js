@@ -3,11 +3,13 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require("path");
 const mongoose = require('mongoose');
+const ejs = require("ejs")
 
 const homeRouter = require(path.join(__dirname,"./routes/home"));
 
 const app = express();
 
+app.set('view engine','ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname,'public')));
 
