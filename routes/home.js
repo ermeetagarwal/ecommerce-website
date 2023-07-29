@@ -94,13 +94,15 @@ router.delete("/api/home/:homecomp/:homeCompTitle", function (req, res,next) {
       if (indexToRemove !== -1) {
         // Remove the homecomponent from the array
         data.homecomponents.splice(indexToRemove, 1);
-
         // Save the updated Intro
         data.save(function (err) {
           if (err) {
             res.send(err);
           } else {
-            res.send("Homecomponent deleted successfully.");
+            Homecomponent.deleteOne({ Title: homeCompTitle },function(err){
+                res.send("Homecomponent deleted successfully.");
+            });
+            
           }
         });
       } else {
