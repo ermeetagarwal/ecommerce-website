@@ -8,17 +8,18 @@ Agarwal Foods Web
 	Post Data :- /api/home/ComponentName/
 	Read Data :- /api/home/ComponentName/ 
 	To Delete :- /api/home/ComponentName/TitleName
- 
-Home
-Carousel
-Category
-Best Sellers
-New Arrival
-Carousel 2
-Recipe India
-What They Say
-Features
-Footer
+
+In Home
+	Home
+	Carousel
+	Category
+	Best Sellers
+	New Arrival
+	Carousel 2
+	Recipe India
+	What They Say
+	Features
+	Footer
 
 
 https://drive.google.com/drive/folders/1pz7PEplLkPgIw-miLSHkaGyYfJZKvRKd?usp=drive_link
