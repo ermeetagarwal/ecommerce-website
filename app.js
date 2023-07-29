@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -15,7 +16,7 @@ app.use(express.static('public'));
 
 app.use('/',homeRouter);
 
-mongoose.connect('mongodb+srv://admin-meet:9T33UlgY7hLtjpJd@agarwalfoods.ti4t1uv.mongodb.net/agarwalfoodsDB',{ useUnifiedTopology: true ,  useNewUrlParser:true});
+mongoose.connect(process.env.DB_URL,{ useUnifiedTopology: true ,  useNewUrlParser:true});
 
 app.listen(3000, function () {
     console.log('Server started at port 3000');
