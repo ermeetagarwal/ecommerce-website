@@ -17,63 +17,6 @@ router.get("/:homecomp", function (req, res, next) {
   });
 });
 
-// router.post("/api/home/:homecomp", function (req, res, next) {
-//   const homeCompImg = req.body.Image;
-//   const homeCompTitle = req.body.Title;
-//   const homeCompDisc = req.body.Description;
-//   const routeTitle = req.params.homecomp;
-//   Intro.findOne({ Title: routeTitle }, function (err, data) {
-//     if (!err) {
-//       if (!data) {
-//         const newhomecomponent = new Homecomponent({
-//           Title: homeCompTitle,
-//           imageUrl: homeCompImg,
-//           Description: homeCompDisc
-//         });
-//         const newintro = new Intro({
-//           Title: routeTitle,
-//           homecomponents: newhomecomponent
-//         });
-//         newhomecomponent.save(function (err) {
-//           if (err) {
-//             return res.status(500).send('Internal Server Error');
-
-//           } else {
-//             newintro.save(function (err) {
-//               if (err) {
-//                 return res.status(500).send('Internal Server Error');
-//               } else {
-//                 res.send("Success");
-//               }
-//             });
-//           }
-//         });
-//       } else {
-//         const newhomecomponent = new Homecomponent({
-//           Title: homeCompTitle,
-//           imageUrl: homeCompImg,
-//           Description: homeCompDisc
-//         });
-//         newhomecomponent.save(function (err) {
-//           if (err) {
-//             return res.status(500).send('Internal Server Error');
-//           } else {
-//             data.homecomponents.push(newhomecomponent);
-//             data.save(function (err) {
-//               if (err) {
-//                 return res.status(500).send('Internal Server Error');
-//               } else {
-//                 res.send("Success");
-//               }
-//             });
-//           }
-//         });
-//       }
-//     } else {
-//         return res.status(500).send('Internal Server Error');
-//     }
-//   });
-// });
 router.post("/:homecomp", async function (req, res, next) {
   try {
     const homeCompImg = req.body.Image;
