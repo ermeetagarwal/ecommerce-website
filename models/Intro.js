@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-const Homecomponent = require('../models/Homecomponent');
+const path = require("path");
+const Homecomponent = require(path.join(__dirname,'../models/Homecomponent'));
 const introSchema = mongoose.Schema({
     Title:String,
     homecomponents:[Homecomponent.schema]
