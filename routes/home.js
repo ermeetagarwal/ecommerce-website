@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const Intro = require('../models/Intro'); // Import the Intro model
-const Homecomponent = require('../models/Homecomponent'); // Import the Homecomponent model
+const Intro = require("../models/Intro"); // Import the Intro model
+const Homecomponent = require("../models/Homecomponent"); // Import the Homecomponent model
 router.get("/:homecomp", function (req, res, next) {
   const routeTitle = req.params.homecomp;
   Intro.findOne({ Title: routeTitle }, function (err, data) {
@@ -48,7 +48,9 @@ router.post("/:homecomp", async function (req, res, next) {
       );
 
       if (homeComponentExists) {
-        return res.status(409).send("Homecomponent with this title already exists.");
+        return res
+          .status(409)
+          .send("Homecomponent with this title already exists.");
       }
 
       const newhomecomponent = new Homecomponent({
@@ -64,11 +66,11 @@ router.post("/:homecomp", async function (req, res, next) {
       res.send("Success");
     }
   } catch (err) {
-    res.status(500).send('Internal Server Error');
+    res.status(500).send("Internal Server Error");
   }
 });
 
-router.delete("/:homecomp/:homeCompTitle", function (req, res,next) {
+router.delete("/:homecomp/:homeCompTitle", function (req, res, next) {
   const routeTitle = req.params.homecomp;
   const homeCompTitle = req.params.homeCompTitle;
 
@@ -92,13 +94,14 @@ router.delete("/:homecomp/:homeCompTitle", function (req, res,next) {
           if (err) {
             res.send(err);
           } else {
-            Homecomponent.deleteOne({ Title: homeCompTitle },function(err){
-                if(err){
-                  res.status(500).send("deletion of homecomponent become unsuccessfull")
-                }
-                res.status(200).send("Homecomponent deleted successfully.");
+            Homecomponent.deleteOne({ Title: homeCompTitle }, function (err) {
+              if (err) {
+                res
+                  .status(500)
+                  .send("deletion of homecomponent become unsuccessfull");
+              }
+              res.status(200).send("Homecomponent deleted successfully.");
             });
-            
           }
         });
       } else {

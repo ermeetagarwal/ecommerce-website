@@ -9,9 +9,8 @@ const homeRouter = require(path.join(__dirname,"./routes/home"));
 const productRouter = require(path.join(__dirname,"./routes/product"));
 const app = express();
 app.set('view engine','ejs');
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname,'public')));
-
+app.use(express.json());
 app.use('/api/home',homeRouter);
 app.use("/api/product",productRouter);
 mongoose.connect(process.env.DB_URL,{ useUnifiedTopology: true ,  useNewUrlParser:true,useFindAndModify: false,useCreateIndex: true});
