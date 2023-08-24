@@ -1,19 +1,20 @@
-require('dotenv').config();
-const express = require('express');
-const bodyParser = require('body-parser');
-const path = require("path");
-const mongoose = require('mongoose');
-const ejs = require("ejs");
-const cors = require('cors');
+import dotenv from 'dotenv';
+dotenv.config();
+import express from 'express';
+import bodyParser from 'body-parser';
+import mongoose from 'mongoose';
+import ejs from 'ejs';
+import cors from 'cors';
 
+// Importing all routes
+import homeRouter from "./routes/home.js";
+import productRouter from "./routes/product.js";
 const allowedOrigins = ['http://127.0.0.1:5500'];
 
-const homeRouter = require(path.join(__dirname,"./routes/home"));
-const productRouter = require(path.join(__dirname,"./routes/product"));
 const app = express();
 
 app.set('view engine','ejs');
-app.use(express.static(path.join(__dirname,'public')));
+app.use(express.static('public'));
 app.use(express.json());
 app.use('/api/home',homeRouter);
 app.use("/api/product",productRouter);

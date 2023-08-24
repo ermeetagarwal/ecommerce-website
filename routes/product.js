@@ -1,8 +1,8 @@
-const express = require("express");
+import express from 'express';
+import productintro from "../models/productintro.js";
+import Product from "../models/Product.js";
+
 const router = express.Router();
-const path = require("path");
-const productintro = require(path.join(__dirname, "../models/productintro")); // Import the Intro model
-const Product = require(path.join(__dirname, "../models/Product"));
 router.post("/", async function (req, res) {
   try{
     const Title = req.body.Title;
@@ -67,6 +67,7 @@ router.post("/", async function (req, res) {
     res.status(500).send("Internal Server Error");
   }
 });
+
 router.get("/", function (req, res) {
   productintro.findOne({ Title: "product" }, function (err, data) {
     if (!err) {
@@ -80,6 +81,7 @@ router.get("/", function (req, res) {
     }
   });
 });
+
 router.get("/:productTitle", function (req, res) {
   const routeTitle = req.params.productTitle;
   productintro.findOne({ Title: "product" }, function (err, data) {
@@ -137,4 +139,4 @@ router.delete("/:productTitle", function (req, res) {
   });
 });
 
-module.exports = router;
+export default router;

@@ -1,7 +1,8 @@
-const express = require("express");
+import express from 'express';
+import Intro from "../models/Intro.js"; // Import the Intro model
+import Homecomponent from "../models/Homecomponent.js"; // Import the Homecomponent model
+
 const router = express.Router();
-const Intro = require("../models/Intro"); // Import the Intro model
-const Homecomponent = require("../models/Homecomponent"); // Import the Homecomponent model
 router.get("/:homecomp", function (req, res, next) {
   const routeTitle = req.params.homecomp;
   Intro.findOne({ Title: routeTitle }, function (err, data) {
@@ -113,4 +114,4 @@ router.delete("/:homecomp/:homeCompTitle", function (req, res, next) {
   });
 });
 
-module.exports = router;
+export default router;
