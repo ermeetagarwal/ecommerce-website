@@ -20,7 +20,7 @@ app.use('/api/home',homeRouter);
 app.use("/api/product",productRouter);
 app.use(
     cors({
-      origin: function (origin, callback) {
+      origin: (origin, callback) => {
         // Check if the requesting origin is allowed
         if (!origin || allowedOrigins.includes(origin)) {
           callback(null, true);
@@ -33,6 +33,6 @@ app.use(
 
 mongoose.connect(process.env.DB_URL,{ useUnifiedTopology: true ,  useNewUrlParser:true,useFindAndModify: false,useCreateIndex: true}).then(()=>console.log('Database Connected')).catch(err=>console.log(err));
 
-app.listen(3000, function () {
+app.listen(3000, () => {
     console.log('Server started at port 3000');
 });

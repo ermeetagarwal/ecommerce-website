@@ -3,9 +3,9 @@ import Intro from "../models/Intro.js"; // Import the Intro model
 import Homecomponent from "../models/Homecomponent.js"; // Import the Homecomponent model
 
 const router = express.Router();
-router.get("/:homecomp", function (req, res, next) {
+router.get("/:homecomp",(req, res, next) =>{
   const routeTitle = req.params.homecomp;
-  Intro.findOne({ Title: routeTitle }, function (err, data) {
+  Intro.findOne({ Title: routeTitle }, (err, data) => {
     if (!err) {
       if (data) {
         res.send(data.homecomponents);
@@ -18,7 +18,7 @@ router.get("/:homecomp", function (req, res, next) {
   });
 });
 
-router.post("/:homecomp", async function (req, res, next) {
+router.post("/:homecomp", async(req, res, next) =>{
   try {
     const homeCompImg = req.body.Image;
     const homeCompTitle = req.body.Title;
@@ -71,7 +71,7 @@ router.post("/:homecomp", async function (req, res, next) {
   }
 });
 
-router.delete("/:homecomp/:homeCompTitle", function (req, res, next) {
+router.delete("/:homecomp/:homeCompTitle",(req, res, next) =>{
   const routeTitle = req.params.homecomp;
   const homeCompTitle = req.params.homeCompTitle;
 
@@ -80,7 +80,7 @@ router.delete("/:homecomp/:homeCompTitle", function (req, res, next) {
     return;
   }
 
-  Intro.findOne({ Title: routeTitle }, function (err, data) {
+  Intro.findOne({ Title: routeTitle }, (err, data)=> {
     if (!err && data) {
       // Find the index of the homecomponent with the given title
       const indexToRemove = data.homecomponents.findIndex(
@@ -91,11 +91,11 @@ router.delete("/:homecomp/:homeCompTitle", function (req, res, next) {
         // Remove the homecomponent from the array
         data.homecomponents.splice(indexToRemove, 1);
         // Save the updated Intro
-        data.save(function (err) {
+        data.save( (err) => {
           if (err) {
             res.send(err);
           } else {
-            Homecomponent.deleteOne({ Title: homeCompTitle }, function (err) {
+            Homecomponent.deleteOne({ Title: homeCompTitle }, (err) => {
               if (err) {
                 res
                   .status(500)

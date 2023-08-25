@@ -3,7 +3,7 @@ import productintro from "../models/productintro.js";
 import Product from "../models/Product.js";
 
 const router = express.Router();
-router.post("/", async function (req, res) {
+router.post("/", async (req, res) => {
   try{
     const Title = req.body.Title;
     const imageUrl = req.body.imageUrl;
@@ -68,8 +68,8 @@ router.post("/", async function (req, res) {
   }
 });
 
-router.get("/", function (req, res) {
-  productintro.findOne({ Title: "product" }, function (err, data) {
+router.get("/", (req, res) => {
+  productintro.findOne({ Title: "product" }, (err, data) => {
     if (!err) {
       if (data) {
         res.send(data.products);
@@ -82,9 +82,9 @@ router.get("/", function (req, res) {
   });
 });
 
-router.get("/:productTitle", function (req, res) {
+router.get("/:productTitle", (req, res) =>  {
   const routeTitle = req.params.productTitle;
-  productintro.findOne({ Title: "product" }, function (err, data) {
+  productintro.findOne({ Title: "product" }, (err, data) => {
     if (!err) {
       if (data) {
         let array = data.products;
@@ -103,9 +103,9 @@ router.get("/:productTitle", function (req, res) {
   });
 });
 
-router.delete("/:productTitle", function (req, res) {
+router.delete("/:productTitle", (req, res) => {
   routeTitle = req.params.productTitle;
-  productintro.findOne({ Title: "product" }, function (err,data) {
+  productintro.findOne({ Title: "product" }, (err,data)=> {
     if (!err && data) {
       // Find the index of the homecomponent with the given title
       const indexToRemove = data.products.findIndex(
@@ -116,11 +116,11 @@ router.delete("/:productTitle", function (req, res) {
         // Remove the homecomponent from the array
         data.products.splice(indexToRemove, 1);
         // Save the updated Intro
-        data.save(function (err) {
+        data.save((err) => {
           if (err) {
             res.send(err);
           } else {
-            Product.deleteOne({ Title: routeTitle }, function (err) {
+            Product.deleteOne({ Title: routeTitle }, (err) => {
               if (err) {
                 res
                   .status(500)
