@@ -9,7 +9,7 @@ import cors from 'cors';
 // Importing all routes
 import homeRouter from "./routes/home.js";
 import productRouter from "./routes/product.js";
-const allowedOrigins = ['http://127.0.0.1:5500'];
+const allowedOrigins = ['http://0.0.0.0:5500'];
 
 const app = express();
 
@@ -31,7 +31,7 @@ app.use(
     })
 );
 
-mongoose.connect(process.env.DB_URL,{ useUnifiedTopology: true ,  useNewUrlParser:true,useFindAndModify: false,useCreateIndex: true});
+mongoose.connect(process.env.DB_URL,{ useUnifiedTopology: true ,  useNewUrlParser:true,useFindAndModify: false,useCreateIndex: true}).then(()=>console.log('Database Connected')).catch(err=>console.log(err));
 
 app.listen(3000, function () {
     console.log('Server started at port 3000');
