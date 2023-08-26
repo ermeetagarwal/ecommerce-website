@@ -1,24 +1,24 @@
-import express from 'express';
+import express, { response } from "express";
 import Intro from "../models/Intro.js"; // Import the Intro model
 import Homecomponent from "../models/Homecomponent.js"; // Import the Homecomponent model
 
 const router = express.Router();
-router.get("/:homecomp",(req, res, next) =>{
-  const routeTitle = req.params.homecomp;
-  Intro.findOne({ Title: routeTitle }, (err, data) => {
-    if (!err) {
-      if (data) {
-        res.send(data.homecomponents);
-      } else {
-        res.status(404).send("Data not found route is invalid");
-      }
+router.get("/:homecomp", async (req, res) => {
+  try {
+    const routeTitle = req.params.homecomp;
+    data = await Intro.findOne({ Title: routeTitle });
+
+    if (data) {
+      res.send(data.homecomponents);
     } else {
-      res.send(err);
+      res.status(404).send("Data not found route is invalid");
     }
-  });
+  } catch (err) {
+    res.status(500).send("Internal Server Error");
+  }
 });
 
-router.post("/:homecomp", async(req, res, next) =>{
+router.post("/:homecomp", async (req, res) => {
   try {
     const homeCompImg = req.body.Image;
     const homeCompTitle = req.body.Title;
@@ -71,47 +71,42 @@ router.post("/:homecomp", async(req, res, next) =>{
   }
 });
 
-router.delete("/:homecomp/:homeCompTitle",(req, res, next) =>{
-  const routeTitle = req.params.homecomp;
-  const homeCompTitle = req.params.homeCompTitle;
+router.delete("/:homecomp/:homeCompTitle", async (req, res) => {
+  try {
+    const routeTitle = req.params.homecomp;
+    const homeCompTitle = req.params.homeCompTitle;
 
-  if (!homeCompTitle) {
-    res.status(400).send("Homecomponent Title parameter is missing.");
-    return;
-  }
+    if (!homeCompTitle) {
+      res.status(400).send("Homecomponent Title parameter is missing.");
+      return;
+    }
 
-  Intro.findOne({ Title: routeTitle }, (err, data)=> {
-    if (!err && data) {
-      // Find the index of the homecomponent with the given title
+    const data = await Intro.findOne({ Title: routeTitle });
+
+    if (data) {
       const indexToRemove = data.homecomponents.findIndex(
         (component) => component.Title === homeCompTitle
       );
 
       if (indexToRemove !== -1) {
-        // Remove the homecomponent from the array
         data.homecomponents.splice(indexToRemove, 1);
-        // Save the updated Intro
-        data.save( (err) => {
-          if (err) {
-            res.send(err);
-          } else {
-            Homecomponent.deleteOne({ Title: homeCompTitle }, (err) => {
-              if (err) {
-                res
-                  .status(500)
-                  .send("deletion of homecomponent become unsuccessfull");
-              }
-              res.status(200).send("Homecomponent deleted successfully.");
-            });
-          }
-        });
+
+        try {
+          await data.save();
+          await Homecomponent.deleteOne({ Title: homeCompTitle });
+          res.status(200).send("Homecomponent deleted successfully.");
+        } catch (err) {
+          res.status(500).send("Deletion of homecomponent was unsuccessful.");
+        }
       } else {
         res.status(404).send("Homecomponent not found in the specified Intro.");
       }
     } else {
       res.status(404).send("Intro not found.");
     }
-  });
+  } catch (err) {
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 export default router;

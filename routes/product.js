@@ -1,10 +1,10 @@
-import express from 'express';
+import express from "express";
 import productintro from "../models/productintro.js";
 import Product from "../models/Product.js";
 
 const router = express.Router();
 router.post("/", async (req, res) => {
-  try{
+  try {
     const Title = req.body.Title;
     const imageUrl = req.body.imageUrl;
     const basePrice = req.body.basePrice;
@@ -15,7 +15,7 @@ router.post("/", async (req, res) => {
     const description = req.body.description;
     const status = req.body.status;
     const discoutedPrice = basePrice - basePrice * (discountPer / 100);
-  
+
     const existingIntro = await productintro.findOne({ Title: "product" });
     if (!existingIntro) {
       const newproduct = new Product({
@@ -34,12 +34,12 @@ router.post("/", async (req, res) => {
         Title: "product",
         products: newproduct,
       });
-  
+
       await newproduct.save();
       await newintro.save();
-  
+
       res.send("Success");
-    } else{
+    } else {
       const productExists = existingIntro.products.some(
         (component) => component.Title === Title
       );
@@ -58,85 +58,80 @@ router.post("/", async (req, res) => {
         status: status,
         discountedPrice: discoutedPrice,
       });
-      await newproduct.save();  
+      await newproduct.save();
       existingIntro.products.push(newproduct);
       await existingIntro.save();
-      res.send('success');
+      res.send("success");
     }
-  }  catch (err) {
+  } catch (err) {
     res.status(500).send("Internal Server Error");
   }
 });
 
-router.get("/", (req, res) => {
-  productintro.findOne({ Title: "product" }, (err, data) => {
-    if (!err) {
-      if (data) {
-        res.send(data.products);
-      } else {
-        res.status(404).send("Data not found route is invalid");
-      }
+router.get("/", async (req, res) => {
+  try {
+    const data = await productintro.findOne({ Title: "product" });
+
+    if (data) {
+      res.send(data.products);
     } else {
-      res.status(500).send(err);
+      res.status(404).send("Data not found, route is invalid");
     }
-  });
+  } catch (err) {
+    res.status(500).send("Internal Server Error");
+  }
 });
 
-router.get("/:productTitle", (req, res) =>  {
-  const routeTitle = req.params.productTitle;
-  productintro.findOne({ Title: "product" }, (err, data) => {
-    if (!err) {
-      if (data) {
-        let array = data.products;
-        for (let i = 0; i < array.length; i++) {
-          if(array[i].Title===routeTitle){
-            res.send(array[i]);
-            break;
-          }
+router.get("/:productTitle", async (req, res) => {
+  try {
+    const routeTitle = req.params.productTitle;
+    const data = await productintro.findOne({ Title: "product" });
+
+    if (data) {
+      const array = data.products;
+
+      for (let i = 0; i < array.length; i++) {
+        if (array[i].Title === routeTitle) {
+          res.send(array[i]);
+          return;
         }
-      } else {
-        res.status(404).send("Data not found route is invalid");
       }
+
+      res.status(404).send("Product not found in the specified route.");
     } else {
-      res.status(500).send(err);
+      res.status(404).send("Data not found, route is invalid");
     }
-  });
+  } catch (err) {
+    res.status(500).send("Internal Server Error");
+  }
 });
 
-router.delete("/:productTitle", (req, res) => {
-  routeTitle = req.params.productTitle;
-  productintro.findOne({ Title: "product" }, (err,data)=> {
-    if (!err && data) {
-      // Find the index of the homecomponent with the given title
+router.delete("/:productTitle", async (req, res) => {
+  try {
+    const routeTitle = req.params.productTitle;
+    const data = await productintro.findOne({ Title: "product" });
+    if (data) {
       const indexToRemove = data.products.findIndex(
         (component) => component.Title === routeTitle
       );
-    
       if (indexToRemove !== -1) {
-        // Remove the homecomponent from the array
         data.products.splice(indexToRemove, 1);
-        // Save the updated Intro
-        data.save((err) => {
-          if (err) {
-            res.send(err);
-          } else {
-            Product.deleteOne({ Title: routeTitle }, (err) => {
-              if (err) {
-                res
-                  .status(500)
-                  .send("deletion of product become unsuccessfull");
-              }
-              res.status(200).send("product deleted successfully.");
-            });
-          }
-        });
+        try {
+          await data.save();
+          await Product.deleteOne({ Title: routeTitle });
+          res.status(200).send("Product deleted successfully.");
+        } catch (err) {
+          res.status(500).send("Deletion of product was unsuccessful.");
+        }
       } else {
         res.status(404).send("Product not found in the specified Intro.");
       }
     } else {
       res.status(404).send("productintro not found.");
     }
-  });
+  } catch (err) {
+    res.status(500).send("Internal Server error");
+  }
 });
 
 export default router;
