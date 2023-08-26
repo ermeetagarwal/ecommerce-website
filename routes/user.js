@@ -2,56 +2,66 @@ import express from "express";
 import mongoose from "mongoose";
 import bcrypt from 'bcrypt';
 import User from "../models/user.js"
+import passport from "passport";
 
 const saltrounds = 10;
 const router = express.Router();
 
-router.post("/register",async (req,res) => {
-    try{
-        const emailexist = await User.findOne({Email:req.body.email});
-        if (emailexist) {
-            // User with the provided email already exists
-            return res.status(409).json({
-              statusText: 'Conflict',
-              message: 'A user with this email already exists.',
-            });
-          }else{
-            const hash = await bcrypt.hash(req.body.password, saltrounds);
-            const newUser = new User({
-                 firstName : req.body.firstName,
-                 lastName : req.body.lastName,
-                 email : req.body.email,
-                 phoneNumber : req.body.phoneNumber,
-                 password : hash,
-            });
-            await newUser.save();
-            res.send("Success"); 
-          }
-    } catch(err){
-        console.error("Unexpected error:", err);
-        return res.status(500).send("An unexpected error occurred.");
+router.post("/register", async (req, res) => {
+    try {
+      const user = await User.register({
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        phoneNumber: req.body.phoneNumber
+      }, req.body.password);
+  
+      if (user) {
+        // User registration successful, you might choose to log them in automatically
+        passport.authenticate("local")(req, res, () => {
+          // You can send a success response here if needed
+          res.status(200).json({
+            statusText: 'Success',
+            message: 'User registered successfully and logged in.'
+          });
+        });
+      }
+    } catch (err) {
+      console.error("Registration error:", err);
+      res.status(500).send("An unexpected error occurred during registration.");
     }
-});
-
-router.post("/login",async (req,res) => {
-    try{
-        const email = req.body.email;
-        const password = req.body.password;
-        const useremailexist = await User.findOne({email:email});
-        if(useremailexist){
-            const result =await bcrypt.compare(password,useremailexist.password);
-            if(result){
-                res.status(200).send("login Successfull");
-            } else{
-                res.status(401).send("Invalid login Credential try again or register");
-            }
-        } else{
-            res.send(401).send("Invalid login Credential try again or register");
+  });
+  router.post("/login", async (req, res) => {
+    try {
+      const user = await User.findOne({ email: req.body.email });
+  
+      if (!user) {
+        return res.status(401).json({
+          statusText: 'Unauthorized',
+          message: 'User not found. Please register.'
+        });
+      }
+  
+      // Use Passport's authenticate method
+      req.login(user, async (err) => {
+        if (err) {
+          console.error("Authentication error:", err);
+          return res.status(500).send("An unexpected error occurred during login.");
         }
-    } catch(err){
-        console.error("Unexpected error:", err);
-        return res.status(500).send("An unexpected error occurred.");
+  
+        // Authentication successful
+        passport.authenticate("local")(req, res, () => {
+          res.status(200).json({
+            statusText: 'Success',
+            message: 'User successfully logged in.'
+          });
+        });
+      });
+    } catch (err) {
+      console.error("Unexpected error:", err);
+      return res.status(500).send("An unexpected error occurred.");
     }
-});
+  });
+  
 
 export default router;
