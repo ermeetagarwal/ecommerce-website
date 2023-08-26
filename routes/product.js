@@ -14,8 +14,11 @@ router.post("/", async (req, res) => {
     const category = req.body.category;
     const description = req.body.description;
     const status = req.body.status;
-    const discoutedPrice = basePrice - basePrice * (discountPer / 100);
-
+    if ((basePrice && discountPer) == !null) {
+      const discountedPrice = basePrice - basePrice * (discountPer / 100);
+    } else {
+      const discountedPrice = req.body.discountedPrice;
+    }
     const existingIntro = await productintro.findOne({ Title: "product" });
     if (!existingIntro) {
       const newproduct = new Product({
@@ -64,7 +67,8 @@ router.post("/", async (req, res) => {
       res.send("success");
     }
   } catch (err) {
-    res.status(500).send("Internal Server Error");
+    console.error("Unexpected error:", err);
+    return res.status(500).send("An unexpected error occurred.");
   }
 });
 
@@ -78,7 +82,8 @@ router.get("/", async (req, res) => {
       res.status(404).send("Data not found, route is invalid");
     }
   } catch (err) {
-    res.status(500).send("Internal Server Error");
+    console.error("Unexpected error:", err);
+    return res.status(500).send("An unexpected error occurred.");
   }
 });
 
@@ -96,13 +101,13 @@ router.get("/:productTitle", async (req, res) => {
           return;
         }
       }
-
       res.status(404).send("Product not found in the specified route.");
     } else {
       res.status(404).send("Data not found, route is invalid");
     }
   } catch (err) {
-    res.status(500).send("Internal Server Error");
+    console.error("Unexpected error:", err);
+    return res.status(500).send("An unexpected error occurred.");
   }
 });
 
@@ -130,8 +135,53 @@ router.delete("/:productTitle", async (req, res) => {
       res.status(404).send("productintro not found.");
     }
   } catch (err) {
-    res.status(500).send("Internal Server error");
+    console.error("Unexpected error:", err);
+    return res.status(500).send("An unexpected error occurred.");
   }
 });
 
+router.patch("/:productTitle", async (req, res) => {
+  try {
+    const routeTitle = req.params.productTitle;
+    const data = await productintro.findOne({ Title: "product" });
+    if (data) {
+      const array = data.products;
+      const existingProduct = array.find(
+        (product) => product.Title === routeTitle
+      );
+      const replacementProduct = {
+        Title: routeTitle,
+        imageUrl: req.body.imageUrl || existingProduct.imageUrl,
+        basePrice: req.body.basePrice || existingProduct.basePrice,
+        discountPer: req.body.discountPer || existingProduct.discountPer,
+        quantity: req.body.quantity || existingProduct.quantity,
+        unit: req.body.unit || existingProduct.unit,
+        category: req.body.category || existingProduct.category,
+        description: req.body.description || existingProduct.description,
+        status: req.body.status || existingProduct.status,
+        discountedPrice:
+          req.body.discountedPrice || existingProduct.discountedPrice,
+      };
+      const searchIndex = array.findIndex(
+        (product) => product.Title === routeTitle
+      );
+      if (searchIndex === -1) {
+        return res.status(404).send("Product not found.");
+      }
+      try {
+        array[searchIndex] = replacementProduct;
+        await data.save(); // Save the updated document
+        res.send(replacementProduct);
+      } catch (err) {
+        console.error("Update error:", err);
+        return res
+          .status(500)
+          .send("Error occurred while updating the product.");
+      }
+    }
+  } catch (err) {
+    console.error("Unexpected error:", err);
+    return res.status(500).send("An unexpected error occurred.");
+  }
+});
 export default router;

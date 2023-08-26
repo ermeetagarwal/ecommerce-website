@@ -14,12 +14,13 @@ router.get("/:homecomp", async (req, res) => {
       res.status(404).send("Data not found route is invalid");
     }
   } catch (err) {
-    res.status(500).send("Internal Server Error");
+    console.error("Unexpected error:", err);
+    return res.status(500).send("An unexpected error occurred.");
   }
 });
 
 router.post("/:homecomp", async (req, res) => {
-  try {
+  try {  
     const homeCompImg = req.body.Image;
     const homeCompTitle = req.body.Title;
     const homeCompDisc = req.body.Description;
@@ -67,7 +68,8 @@ router.post("/:homecomp", async (req, res) => {
       res.send("Success");
     }
   } catch (err) {
-    res.status(500).send("Internal Server Error");
+    console.error("Unexpected error:", err);
+    return res.status(500).send("An unexpected error occurred.");
   }
 });
 
@@ -105,7 +107,8 @@ router.delete("/:homecomp/:homeCompTitle", async (req, res) => {
       res.status(404).send("Intro not found.");
     }
   } catch (err) {
-    res.status(500).send("Internal Server Error");
+    console.error("Unexpected error:", err);
+    return res.status(500).send("An unexpected error occurred.");
   }
 });
 
