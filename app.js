@@ -5,10 +5,13 @@ import bodyParser from "body-parser";
 import mongoose from "mongoose";
 import ejs from "ejs";
 import cors from "cors";
-
+import connectDB from "./config/db.js";
 // Importing all routes
 import homeRouter from "./routes/home.js";
 import productRouter from "./routes/product.js";
+import userRouter from "./routes/user.js";
+
+connectDB();
 const allowedOrigins = ["http://0.0.0.0:5500"];
 
 const app = express();
@@ -16,8 +19,6 @@ const app = express();
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(express.json());
-app.use("/api/home", homeRouter);
-app.use("/api/product", productRouter);
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -31,15 +32,9 @@ app.use(
   })
 );
 
-mongoose
-  .connect(process.env.DB_URL, {
-    useUnifiedTopology: true,
-    useNewUrlParser: true,
-    useFindAndModify: false,
-    useCreateIndex: true,
-  })
-  .then(() => console.log("Database Connected"))
-  .catch((err) => console.log(err));
+app.use("/api/home", homeRouter);
+app.use("/api/product", productRouter);
+app.use("/user",userRouter);
 
 app.listen(3000, () => {
   console.log("Server started at port 3000");
