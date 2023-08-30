@@ -13,6 +13,7 @@ import passportLocalMongoose from "passport-local-mongoose";
 import homeRouter from "./routes/home.js";
 import productRouter from "./routes/product.js";
 import userRouter from "./routes/user.js";
+import Cart from "./routes/cart.js";
 
 
 const allowedOrigins = ["http://0.0.0.0:5500"];
@@ -46,7 +47,7 @@ app.use(passport.session());
 app.use("/api/home", homeRouter);
 app.use("/api/product", productRouter);
 app.use("/user",userRouter);
-
+app.use("/",Cart)
 connectDB();
 app.listen(3000, () => {
   console.log("Server started at port 3000");

@@ -8,29 +8,36 @@ const router = express.Router();
 router.post("/register", async (req, res) => {
   try {
     const existingUser = await User.findOne({ email: req.body.email });
-
     if (existingUser) {
       return res.status(409).json({
         statusText: "Conflict",
         message: "Email already exists. Please use a different email.",
       });
-    }
-
-    const newUser = new User({
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      email: req.body.email,
-      phoneNumber: req.body.phoneNumber,
-    });
-
-    await User.register(newUser, req.body.password);
-
-    passport.authenticate("local")(req, res, () => {
-      res.status(200).json({
-        statusText: "Success",
-        message: "User registered successfully and logged in.",
+    } else {
+      const newUser = new User({
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        phoneNumber: req.body.phoneNumber,
       });
-    });
+      console.log(newUser);
+
+      try {
+        await User.register(newUser, req.body.password);
+
+        passport.authenticate("local")(req, res, () => {
+          res.status(200).json({
+            statusText: "Success",
+            message: "User registered successfully and logged in.",
+          });
+        });
+      } catch (err) {
+        console.error("User registration error:", err);
+        res
+          .status(500)
+          .send("An unexpected error occurred during registration.");
+      }
+    }
   } catch (err) {
     console.error("Registration error:", err);
     res.status(500).send("An unexpected error occurred during registration.");

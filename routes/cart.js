@@ -1,8 +1,8 @@
 import express from "express";
 import passport from "passport";
-import User from "../models/user";
-import Cart from "../models/cart";
-import ensureAuthenticated from "../middleware";
+import User from "../models/user.js";
+import Cart from "../models/cart.js";
+import ensureAuthenticated from "../middleware/index.js";
 
 const router = express.Router();
 
