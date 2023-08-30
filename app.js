@@ -42,6 +42,7 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+
 app.use("/api/home", homeRouter);
 app.use("/api/product", productRouter);
 app.use("/user",userRouter);
