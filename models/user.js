@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import passport from "passport";
 import session from "express-session";
 import passportLocalMongoose from "passport-local-mongoose";
-import cart from "./cart";
 const userSchema = mongoose.Schema({
     firstName : {type:String,require:true},
     lastName : {type:String,require:true},
