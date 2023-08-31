@@ -20,8 +20,6 @@ router.post("/register", async (req, res) => {
         email: req.body.email,
         phoneNumber: req.body.phoneNumber,
       });
-      console.log(newUser);
-
       try {
         await User.register(newUser, req.body.password);
 
