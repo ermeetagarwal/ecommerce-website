@@ -3,7 +3,7 @@ import passport from "passport";
 import User from "../models/user.js";
 import Cart from "../models/cart.js";
 import ensureAuthenticated from "../middleware/index.js";
-
+import Product from "../models/Product.js";
 const router = express.Router();
 
 // Route to add a product to the user's cart
@@ -11,13 +11,11 @@ const router = express.Router();
 router.post("/cart", ensureAuthenticated, async (req, res) => {
   try {
     const cartUpdates = req.body;
-
     // If cartUpdates is not an array, assume it's a single product update
     if (!Array.isArray(cartUpdates)) {
-      if (productTitle && quantity !== undefined) {
+      const productTitle = cartUpdates.Title;
+      if (productTitle !== undefined) {
         // Handle single product update...
-        const { productTitle, quantity } = cartUpdates;
-
         // Find the product based on the productTitle
         const product = await Product.findOne({Title:productTitle});
 
@@ -36,15 +34,15 @@ router.post("/cart", ensureAuthenticated, async (req, res) => {
 
         // Find the item in the cart
         const existingItem = userCart.items.find((item) =>
-          item.product.equals(product.Title)
+          item.product===product.Title
         );
 
         if (existingItem) {
-          existingItem.quantity = quantity+1; // Update the quantity
+          existingItem.quantity = existingItem.quantity+1; // Update the quantity
         } else {
           userCart.items.push({
-            product: product._id,
-            quantity: quantity,
+            product: product.Title,
+            quantity: 1,
           });
         }
         await userCart.save();
@@ -113,6 +111,32 @@ router.post("/cart", ensureAuthenticated, async (req, res) => {
     }
   } catch (err) {
     console.error("Error updating cart:", err);
+    res.status(500).send("An unexpected error occurred.");
+  }
+});
+
+router.get("/cart", ensureAuthenticated, async (req, res) => {
+  try {
+    // Get the authenticated user
+    const user = req.user; // Assumes the user object is attached to the request by Passport
+
+    // Find the user's cart
+    const userCart = await Cart.findOne({ user: user._id });
+
+    if (!userCart) {
+      return res.status(404).json({
+        statusText: "Not Found",
+        message: "Cart not found for the user.",
+      });
+    }
+
+    // Return the user's cart data in JSON format
+    res.status(200).json({
+      statusText: "Success",
+      cart: userCart.items,
+    });
+  } catch (err) {
+    console.error("Error retrieving cart:", err);
     res.status(500).send("An unexpected error occurred.");
   }
 });

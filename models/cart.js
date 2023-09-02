@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
-import Product from "./Product.js";
-import User from "./user.js"
+
 const cartItemSchema = new mongoose.Schema({
   product: {
     type: String,
