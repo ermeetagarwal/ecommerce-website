@@ -47,7 +47,7 @@ app.use(passport.session());
 app.use("/api/home", homeRouter);
 app.use("/api/product", productRouter);
 app.use("/user",userRouter);
-app.use("/",Cart)
+app.use("/cart",Cart)
 connectDB();
 app.listen(3000, () => {
   console.log("Server started at port 3000");
