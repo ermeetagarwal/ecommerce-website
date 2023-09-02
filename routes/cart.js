@@ -140,5 +140,49 @@ router.get("/cart", ensureAuthenticated, async (req, res) => {
     res.status(500).send("An unexpected error occurred.");
   }
 });
+// Add a PATCH route to remove a product from the user's cart
+router.patch("/cart/remove", ensureAuthenticated, async (req, res) => {
+  try {
+    const { Title } = req.body;
+
+    // Get the authenticated user
+    const user = req.user;
+
+    // Find the user's cart
+    let userCart = await Cart.findOne({ user: user._id });
+
+    if (!userCart) {
+      return res.status(404).json({
+        statusText: "Not Found",
+        message: "Cart not found for the user.",
+      });
+    }
+
+    // Find the index of the item to remove in the cart's items array
+    const indexToRemove = userCart.items.findIndex(
+      (item) => item.product === Title
+    );
+
+    if (indexToRemove === -1) {
+      return res.status(404).json({
+        statusText: "Not Found",
+        message: `Product with Title ${Title} not found in the cart.`,
+      });
+    }
+
+    // Remove the item from the cart
+    userCart.items.splice(indexToRemove, 1);
+
+    await userCart.save();
+
+    res.status(200).json({
+      statusText: "Success",
+      message: "Product removed from the cart.",
+    });
+  } catch (err) {
+    console.error("Error removing product from cart:", err);
+    res.status(500).send("An unexpected error occurred.");
+  }
+});
 
 export default router;
