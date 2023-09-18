@@ -139,7 +139,7 @@ router.get("/", ensureAuthenticated, async (req, res) => {
   }
 });
 // Add a PATCH route to remove a product from the user's cart
-router.patch("/remove", ensureAuthenticated, async (req, res) => {
+router.patch("/", ensureAuthenticated, async (req, res) => {
   try {
     const { Title } = req.body;
 
