@@ -55,7 +55,6 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const use = await User.findOne({ email: req.body.email });
-    console.log(use);
     if (!use) {
       return res.status(401).json({
         statusText: "Unauthorized",
