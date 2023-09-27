@@ -2,6 +2,8 @@ import express from "express";
 import mongoose from "mongoose";
 import User from "../models/user.js";
 import passport from "passport";
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
 const router = express.Router();
 
@@ -21,13 +23,22 @@ router.post("/register", async (req, res) => {
         phoneNumber: req.body.phoneNumber,
       });
       try {
-        await User.register(newUser, req.body.password);
+        // Hash the password before storing it
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(req.body.password, saltRounds);
+        newUser.password = hashedPassword;
 
-        passport.authenticate("local")(req, res, () => {
-          res.status(200).json({
-            statusText: "Success",
-            message: "User registered successfully and logged in.",
-          });
+        await newUser.save();
+
+        // Create a JWT token
+        const token = jwt.sign({ userId: newUser._id }, "YourSecretKeyHere" , {
+          expiresIn: "1h", // You can adjust the expiration time
+        });
+
+        res.status(201).json({
+          statusText: "Success",
+          message: "User registered successfully ",
+          token: token, // Include the token in the response
         });
       } catch (err) {
         console.error("User registration error:", err);
@@ -44,33 +55,29 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const use = await User.findOne({ email: req.body.email });
-
+    console.log(use);
     if (!use) {
       return res.status(401).json({
         statusText: "Unauthorized",
         message: "User not found or Email not found. Please register.",
       });
     }
-    const user = new User({
-      email: req.body.email,
-      password: req.body.password,
-    });
-    // Use Passport's authenticate method
-    req.login(user, async (err) => {
-      if (err) {
-        console.error("Authentication error:", err);
-        return res
-          .status(500)
-          .send("An unexpected error occurred during login.");
-      }
-
-      // Authentication successful
-      passport.authenticate("local")(req, res, () => {
-        res.status(200).json({
-          statusText: "Success",
-          message: "User successfully logged in.",
-        });
+    // Check if the provided password is correct
+    const isPasswordValid = await bcrypt.compare(req.body.password, use.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({
+        statusText: "Unauthorized",
+        message: "Incorrect password.",
       });
+    }
+    // Generate a JWT token for the authenticated user
+    const token = jwt.sign({ userId: use._id }, 'your_secret_key', {
+      expiresIn: '1h', // You can adjust the expiration time
+    });
+    res.status(200).json({
+      statusText: "Success",
+      message: "User successfully logged in.",
+      token: token, // Include the token in the response
     });
   } catch (err) {
     console.error("Unexpected error:", err);

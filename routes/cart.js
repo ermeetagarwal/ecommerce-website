@@ -1,12 +1,12 @@
 import express from "express";
 import Cart from "../models/cart.js";
-import ensureAuthenticated from "../middleware/index.js";
+import authenticateToken from "../middleware/index.js";
 import Product from "../models/Product.js";
 const router = express.Router();
 
 // Route to add a product to the user's cart
 // Route to update quantities of multiple products in the user's cart
-router.post("/", ensureAuthenticated, async (req, res) => {
+router.post("/", authenticateToken, async (req, res) => {
   try {
     const cartUpdates = req.body;
     // If cartUpdates is not an array, assume it's a single product update
@@ -113,7 +113,7 @@ router.post("/", ensureAuthenticated, async (req, res) => {
   }
 });
 
-router.get("/", ensureAuthenticated, async (req, res) => {
+router.get("/", authenticateToken, async (req, res) => {
   try {
     // Get the authenticated user
     const user = req.user; // Assumes the user object is attached to the request by Passport
@@ -139,7 +139,7 @@ router.get("/", ensureAuthenticated, async (req, res) => {
   }
 });
 // Add a PATCH route to remove a product from the user's cart
-router.patch("/", ensureAuthenticated, async (req, res) => {
+router.patch("/", authenticateToken, async (req, res) => {
   try {
     const { Title } = req.body;
 

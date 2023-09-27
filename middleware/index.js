@@ -1,10 +1,39 @@
-// Middleware to ensure user is authenticated
-function ensureAuthenticated(req, res, next) {
-    if (req.isAuthenticated()) {
-      return next();
-    }
-    res.status(401).send("redirected to login page");
-  //  res.redirect("/user/login"); // Redirect to the login page if not authenticated
+import  Jwt  from 'jsonwebtoken';
+import User from '../models/user.js';
+const authenticateToken = (req, res, next) => {
+  const token = req.header('Authorization');
+  if (!token) {
+    return res.status(401).json({
+      statusText: "Unauthorized",
+      message: "Token is missing.",
+    });
   }
 
-export default ensureAuthenticated;
+  jwt.verify(token, 'YourSecretKeyHere', async (err, decoded) => {
+    if (err) {
+      return res.status(403).json({
+        statusText: "Forbidden",
+        message: "Invalid token.",
+      });
+    }
+
+    try {
+      const user = await User.findById(decoded.userId);
+      if (!user) {
+        return res.status(403).json({
+          statusText: "Forbidden",
+          message: "User not found.",
+        });
+      }
+
+      // Attach the user to the request for further processing
+      req.user = user;
+      next();
+    } catch (err) {
+      console.error("Authentication error:", err);
+      res.status(500).send("An unexpected error occurred during authentication.");
+    }
+  });
+};
+
+export default authenticateToken;

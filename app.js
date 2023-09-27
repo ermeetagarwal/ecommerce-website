@@ -9,6 +9,8 @@ import connectDB from "./config/db.js";
 import session from "express-session";
 import passport from "passport";
 import passportLocalMongoose from "passport-local-mongoose";
+import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt'; // Added for JWT
+import bcrypt from "bcrypt"; // Added for password hashing
 // Importing all routes
 import homeRouter from "./routes/home.js";
 import productRouter from "./routes/product.js";
@@ -36,14 +38,23 @@ app.use(
   })
 );
 // Passport Setup.
-app.use(session({
-  secret:"I Dont Know What To Add Here.",
-  resave: false,
-  saveUninitialized: false
-}));
-app.use(passport.initialize());
-app.use(passport.session());
+// Configure Passport for JWT strategy
+passport.use(new JwtStrategy({
+  secretOrKey: "YourSecretKeyHere", // Change this to your secret key
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
+}, async (jwtPayload, done) => {
+  try {
+    const user = await User.findById(jwtPayload.userId);
 
+    if (user) {
+      return done(null, user);
+    } else {
+      return done(null, false);
+    }
+  } catch (error) {
+    return done(error, false);
+  }
+}));
 app.use("/api/home", homeRouter);
 app.use("/api/product", productRouter);
 app.use("/user",userRouter);
