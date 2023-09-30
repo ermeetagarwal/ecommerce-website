@@ -8,9 +8,14 @@ const authenticateToken = (req, res, next) => {
       message: "Token is missing.",
     });
   }
-
-  jwt.verify(token, 'YourSecretKeyHere', async (err, decoded) => {
+  jwt.verify(token, 'your_secret_key', async (err, decoded) => {
     if (err) {
+      console.error("JWT Verification Error:", err); // Log the error for debugging
+
+      // Log the stack trace if available
+      if (err.stack) {
+        console.error(err.stack);
+      }
       return res.status(403).json({
         statusText: "Forbidden",
         message: "Invalid token.",
