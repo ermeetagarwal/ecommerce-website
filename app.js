@@ -40,7 +40,7 @@ app.use(
 // Passport Setup.
 // Configure Passport for JWT strategy
 passport.use(new JwtStrategy({
-  secretOrKey: "your_secret_key", // Change this to your secret key
+  secretOrKey: process.env.SECRET, // Change this to your secret key
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
 }, async (jwtPayload, done) => {
   try {

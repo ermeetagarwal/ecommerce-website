@@ -8,7 +8,7 @@ const authenticateToken = (req, res, next) => {
       message: "Token is missing.",
     });
   }
-  jwt.verify(token, 'your_secret_key', async (err, decoded) => {
+  jwt.verify(token, process.env.SECRET, async (err, decoded) => {
     if (err) {
       console.error("JWT Verification Error:", err); // Log the error for debugging
 
