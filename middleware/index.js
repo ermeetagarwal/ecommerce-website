@@ -11,11 +11,6 @@ const authenticateToken = (req, res, next) => {
   jwt.verify(token, process.env.SECRET, async (err, decoded) => {
     if (err) {
       console.error("JWT Verification Error:", err); // Log the error for debugging
-
-      // Log the stack trace if available
-      if (err.stack) {
-        console.error(err.stack);
-      }
       return res.status(403).json({
         statusText: "Forbidden",
         message: "Invalid token.",
@@ -31,7 +26,6 @@ const authenticateToken = (req, res, next) => {
         });
       }
 
-      // Attach the user to the request for further processing
       req.user = user;
       next();
     } catch (err) {
