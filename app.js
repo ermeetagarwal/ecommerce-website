@@ -36,6 +36,7 @@ app.use("/api/product", productRouter);
 app.use("/user",userRouter);
 app.use("/cart",Cart)
 connectDB();
-app.listen(3000, () => {
-  console.log("Server started at port 3000");
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log("Server started at port ",port);
 });
