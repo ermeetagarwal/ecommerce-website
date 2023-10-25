@@ -10,13 +10,11 @@ const authenticateToken = (req, res, next) => {
   }
   jwt.verify(token, process.env.SECRET, async (err, decoded) => {
     if (err) {
-      console.error("JWT Verification Error:", err); // Log the error for debugging
       return res.status(403).json({
         statusText: "Forbidden",
         message: "Invalid token.",
       });
     }
-
     try {
       const user = await User.findById(decoded.userId);
       if (!user) {
@@ -25,7 +23,6 @@ const authenticateToken = (req, res, next) => {
           message: "User not found.",
         });
       }
-
       req.user = user;
       next();
     } catch (err) {
