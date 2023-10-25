@@ -1,5 +1,7 @@
 function registerUser() {
 
+    console.log("Called")
+
     const firstName = document.getElementById('reg-firstName').value;
     const lastName = document.getElementById('reg-lastName').value;
     const email = document.getElementById('reg-email').value;
@@ -36,9 +38,7 @@ function registerUser() {
         })
         .then(data => {
             // Handle the response data here
-            console.log('Response data:', data);
-            // window.location.href = 'http://127.0.0.1:5501/index.html';
-            getCartData()
+            window.location.href = 'http://127.0.0.1:5501/index.html';
         })
         .catch(error => {
             // Handle any errors that occurred during the fetch
