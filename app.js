@@ -8,8 +8,9 @@ import homeRouter from "./routes/home.js";
 import productRouter from "./routes/product.js";
 import userRouter from "./routes/user.js";
 import Cart from "./routes/cart.js";
-
-
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUI from "swagger-ui-express";
+import options from "./config/swagger.js";
 // const allowedOrigins = ["http://0.0.0.0:5500"];
 
 const app = express();
@@ -29,6 +30,10 @@ app.use(express.json());
 //     },
 //   })
 // );
+const swaggerSpec = swaggerJSDoc(options);
+app.use("/api-doc",swaggerUI.serve,swaggerUI.setup(swaggerSpec
+  ))
+
 app.use("/api/home", homeRouter);
 app.use("/api/product", productRouter);
 app.use("/user",userRouter);

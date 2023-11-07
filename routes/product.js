@@ -71,7 +71,19 @@ router.post("/", async (req, res) => {
     return res.status(500).send("An unexpected error occurred.");
   }
 });
-
+/**
+ * @swagger
+ * /api/product:
+ *  get:
+ *    summary: This api is use to get all the Product.
+ *    responses:
+ *      200:
+ *          description: Here is our product array.
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type:array
+ */
 router.get("/", async (req, res) => {
   try {
     const data = await productintro.findOne({ Title: "product" });

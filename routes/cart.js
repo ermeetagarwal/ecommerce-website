@@ -6,6 +6,7 @@ const router = express.Router();
 
 // Route to add a product to the user's cart
 // Route to update quantities of multiple products in the user's cart
+
 router.post("/", authenticateToken, async (req, res) => {
   try {
     const cartUpdates = req.body;
