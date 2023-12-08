@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 const homeComponentSchema = mongoose.Schema({
   Title: {
     type: String,
@@ -10,4 +10,4 @@ const homeComponentSchema = mongoose.Schema({
 });
 const Homecomponent = new mongoose.model("Homecomponent", homeComponentSchema);
 
-export default Homecomponent;
+module.exports = Homecomponent;

@@ -1,16 +1,16 @@
-import dotenv from "dotenv";
-dotenv.config();
-import express from "express";
-import cors from "cors";
-import connectDB from "./config/db.js";
-// Importing all routes
-import homeRouter from "./routes/home.js";
-import productRouter from "./routes/product.js";
-import userRouter from "./routes/user.js";
-import Cart from "./routes/cart.js";
-import swaggerJSDoc from "swagger-jsdoc";
-import swaggerUI from "swagger-ui-express";
-import options from "./config/swagger.js";
+// CommonJS modules
+require('dotenv').config();
+const express = require("express");
+const cors = require("cors");
+const connectDB = require("./config/db.js");
+const homeRouter = require("./routes/home.js");
+const productRouter = require("./routes/product.js");
+const userRouter = require("./routes/user.js");
+const Cart = require("./routes/cart.js");
+
+const swaggerJSDoc = require("swagger-jsdoc");
+const swaggerUI = require("swagger-ui-express");
+const options = require("./config/swagger.js");
 // const allowedOrigins = ["http://0.0.0.0:5500"];
 
 const app = express();
@@ -31,8 +31,7 @@ app.use(express.json());
 //   })
 // );
 const swaggerSpec = swaggerJSDoc(options);
-app.use("/api-doc",swaggerUI.serve,swaggerUI.setup(swaggerSpec
-  ))
+app.use("/api-doc",swaggerUI.serve,swaggerUI.setup(swaggerSpec));
 
 app.use("/api/home", homeRouter);
 app.use("/api/product", productRouter);

@@ -1,56 +1,9 @@
-import express from "express";
-import productintro from "../models/productintro.js";
-import Product from "../models/Product.js";
+const express = require("express");
+const productintro = require("../models/productintro.js");
+const Product = require("../models/Product.js");
 
 const router = express.Router();
-/**
- * @swagger
- *  components:
- *    schema:
- *      product:
- *        type: object
- *        properties:
- *          Title:
- *            type: string
- *          imageUrl:
- *            type: string
- *          basePrice:
- *            type: integer
- *          discountPer:
- *            type: integer
- *          quantity:
- *            type: integer
- *          unit:
- *            type: string
- *          category:
- *            type: string
- *          description:
- *            type: string
- *          status:
- *            type: string
- *          discountedPrice:
- *            type: integer
- */
-/**
- * @swagger
- * /api/product:
- *  post:
- *    summary: This API is used to post a single product.
- *    requestBody:
- *      required: true
- *      description: Enter product details; all fields are mandatory.
- *      content:
- *        application/json:
- *          schema:
- *            $ref: '#/components/schema/product'
- *    responses:
- *      200:
- *        description: Here is our product.
- *        content:
- *          application/json:
- *            schema:
- *              type: array
- */
+
 
 router.post("/", async (req, res) => {
   try {
@@ -63,10 +16,11 @@ router.post("/", async (req, res) => {
     const category = req.body.category;
     const description = req.body.description;
     const status = req.body.status;
+    let discountedPrice;
     if ((basePrice && discountPer) == !null) {
-      const discountedPrice = basePrice - basePrice * (discountPer / 100);
+      discountedPrice = basePrice - basePrice * (discountPer / 100);
     } else {
-      const discountedPrice = req.body.discountedPrice;
+      discountedPrice = req.body.discountedPrice;
     }
     const existingIntro = await productintro.findOne({ Title: "product" });
     if (!existingIntro) {
@@ -231,4 +185,4 @@ router.patch("/:productTitle", async (req, res) => {
     return res.status(500).send("An unexpected error occurred.");
   }
 });
-export default router;
+module.exports = router;

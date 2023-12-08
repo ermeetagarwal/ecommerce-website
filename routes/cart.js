@@ -1,7 +1,8 @@
-import express from "express";
-import Cart from "../models/cart.js";
-import authenticateToken from "../middleware/index.js";
-import Product from "../models/Product.js";
+const express = require("express");
+const Cart = require("../models/cart.js");
+const authenticateToken = require("../middleware/index.js");
+const Product = require("../models/Product.js");
+
 const router = express.Router();
 
 // Route to add a product to the user's cart
@@ -184,4 +185,4 @@ router.patch("/", authenticateToken, async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;

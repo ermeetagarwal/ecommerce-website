@@ -13,4 +13,4 @@ const options={
     },
     apis:["./routes/*.js"]
 }
-export default options
+module.exports = options;

@@ -1,8 +1,9 @@
-import express, { response } from "express";
-import Intro from "../models/Intro.js"; // Import the Intro model
-import Homecomponent from "../models/Homecomponent.js"; // Import the Homecomponent model
+const express = require("express");
+const Intro = require("../models/Intro.js"); // Import the Intro model
+const Homecomponent = require("../models/Homecomponent.js"); // Import the Homecomponent model
 
 const router = express.Router();
+
 router.get("/:homecomp", async (req, res) => {
   try {
     const routeTitle = req.params.homecomp;
@@ -112,4 +113,5 @@ router.delete("/:homecomp/:homeCompTitle", async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router;
+
