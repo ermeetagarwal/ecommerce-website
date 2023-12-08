@@ -7,6 +7,7 @@ const homeRouter = require("./routes/home.js");
 const productRouter = require("./routes/product.js");
 const userRouter = require("./routes/user.js");
 const Cart = require("./routes/cart.js");
+const dropaline = require("./routes/dal.js");
 
 const swaggerJSDoc = require("swagger-jsdoc");
 const swaggerUI = require("swagger-ui-express");
@@ -37,6 +38,7 @@ app.use("/api/home", homeRouter);
 app.use("/api/product", productRouter);
 app.use("/user",userRouter);
 app.use("/cart",Cart)
+app.use("/api/dal",dropaline);
 connectDB();
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
