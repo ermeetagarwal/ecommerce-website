@@ -1,13 +1,14 @@
 import  jwt  from 'jsonwebtoken';
 import User from '../models/user.js';
 const authenticateToken = (req, res, next) => {
-  const token = req.headers.authorization.split(' ')[1];
-  if (!token) {
+  const token1 = req.header('Authorization');
+  if (!token1) {
     return res.status(401).json({
       statusText: "Unauthorized",
       message: "Token is missing.",
     });
   }
+  const token = token1.split(' ')[1];
   jwt.verify(token, process.env.SECRET, async (err, decoded) => {
     if (err) {
       return res.status(403).json({

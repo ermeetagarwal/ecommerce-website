@@ -3,6 +3,55 @@ import productintro from "../models/productintro.js";
 import Product from "../models/Product.js";
 
 const router = express.Router();
+/**
+ * @swagger
+ *  components:
+ *    schema:
+ *      product:
+ *        type: object
+ *        properties:
+ *          Title:
+ *            type: string
+ *          imageUrl:
+ *            type: string
+ *          basePrice:
+ *            type: integer
+ *          discountPer:
+ *            type: integer
+ *          quantity:
+ *            type: integer
+ *          unit:
+ *            type: string
+ *          category:
+ *            type: string
+ *          description:
+ *            type: string
+ *          status:
+ *            type: string
+ *          discountedPrice:
+ *            type: integer
+ */
+/**
+ * @swagger
+ * /api/product:
+ *  post:
+ *    summary: This API is used to post a single product.
+ *    requestBody:
+ *      required: true
+ *      description: Enter product details; all fields are mandatory.
+ *      content:
+ *        application/json:
+ *          schema:
+ *            $ref: '#/components/schema/product'
+ *    responses:
+ *      200:
+ *        description: Here is our product.
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: array
+ */
+
 router.post("/", async (req, res) => {
   try {
     const Title = req.body.Title;
@@ -71,19 +120,6 @@ router.post("/", async (req, res) => {
     return res.status(500).send("An unexpected error occurred.");
   }
 });
-/**
- * @swagger
- * /api/product:
- *  get:
- *    summary: This api is use to get all the Product.
- *    responses:
- *      200:
- *          description: Here is our product array.
- *          content:
- *            application/json:
- *              schema:
- *                type:array
- */
 router.get("/", async (req, res) => {
   try {
     const data = await productintro.findOne({ Title: "product" });
@@ -98,7 +134,6 @@ router.get("/", async (req, res) => {
     return res.status(500).send("An unexpected error occurred.");
   }
 });
-
 router.get("/:productTitle", async (req, res) => {
   try {
     const routeTitle = req.params.productTitle;
