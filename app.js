@@ -8,6 +8,7 @@ const productRouter = require("./routes/product.js");
 const userRouter = require("./routes/user.js");
 const Cart = require("./routes/cart.js");
 const dropaline = require("./routes/dal.js");
+const discountcode = require("./routes/discountcode.js");
 
 const swaggerJSDoc = require("swagger-jsdoc");
 const swaggerUI = require("swagger-ui-express");
@@ -34,6 +35,7 @@ app.use(express.json());
 const swaggerSpec = swaggerJSDoc(options);
 app.use("/api-doc",swaggerUI.serve,swaggerUI.setup(swaggerSpec));
 
+app.use("/api/discountcode",discountcode);
 app.use("/api/home", homeRouter);
 app.use("/api/product", productRouter);
 app.use("/user",userRouter);
