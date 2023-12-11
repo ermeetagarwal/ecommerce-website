@@ -12,7 +12,7 @@ router.post("/", authenticateToken, async (req, res) => {
   try {
     const cartUpdates = req.body;
     // If cartUpdates is not an array, assume it's a single product update
-    if (!Array.isArray(cartUpdates)) {
+    if (!Array.isArray(cartUpdates && cartUpdates !== null)) {
       const productTitle = cartUpdates.Title;
       if (productTitle !== undefined) {
         // Handle single product update...
@@ -39,14 +39,18 @@ router.post("/", authenticateToken, async (req, res) => {
 
         if (existingItem) {
           existingItem.quantity = existingItem.quantity+1; // Update the quantity
+          existingItem.subtotal = existingItem.quantity*existingItem.price //update the price
+          userCart.markModified('items');
         } else {
           userCart.items.push({
+            imgurl: product.imageUrl,
             product: product.Title,
             quantity: 1,
+            price: product.discountedPrice,
+            subtotal: product.discountedPrice*1
           });
         }
         await userCart.save();
-
         res.status(200).json({
           statusText: "Success",
           message: "Cart updated.",
@@ -57,7 +61,7 @@ router.post("/", authenticateToken, async (req, res) => {
           message: "Invalid product update data.",
         });
       }
-    } else {
+    } else {  
       // Handle multiple product updates...
       const cartUpdates = req.body;
 
@@ -124,22 +128,28 @@ router.get("/", authenticateToken, async (req, res) => {
     const userCart = await Cart.findOne({ user: user._id });
     
     if (!userCart) {
-        return res.status(200).json({
-          statusText: "Success",
-          cart: [],
-        });
-      }
+      return res.status(200).json({
+        statusText: "Success",
+        cart: [],
+        total: 0, // Add total property with initial value
+      });
+    }
 
-    // Return the user's cart data in JSON format
+    // Calculate the total sum of all subtotals
+    const total = userCart.items.reduce((acc, item) => acc + item.subtotal, 0);
+
+    // Return the user's cart data along with the total in JSON format
     res.status(200).json({
       statusText: "Success",
       cart: userCart.items,
+      total: total,
     });
   } catch (err) {
     console.error("Error retrieving cart:", err);
     res.status(500).send("An unexpected error occurred.");
   }
 });
+
 // Add a PATCH route to remove a product from the user's cart
 router.patch("/", authenticateToken, async (req, res) => {
   try {

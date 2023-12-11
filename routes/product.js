@@ -17,7 +17,7 @@ router.post("/", async (req, res) => {
     const description = req.body.description;
     const status = req.body.status;
     let discountedPrice;
-    if ((basePrice && discountPer) == !null) {
+    if (basePrice !== null && discountPer !== null) {
       discountedPrice = basePrice - basePrice * (discountPer / 100);
     } else {
       discountedPrice = req.body.discountedPrice;
@@ -34,7 +34,7 @@ router.post("/", async (req, res) => {
         category: category,
         description: description,
         status: status,
-        discountedPrice: discoutedPrice,
+        discountedPrice: discountedPrice,
       });
       const newintro = new productintro({
         Title: "product",
@@ -62,7 +62,7 @@ router.post("/", async (req, res) => {
         category: category,
         description: description,
         status: status,
-        discountedPrice: discoutedPrice,
+        discountedPrice: discountedPrice,
       });
       await newproduct.save();
       existingIntro.products.push(newproduct);
