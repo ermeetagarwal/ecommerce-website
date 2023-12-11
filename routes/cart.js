@@ -122,13 +122,13 @@ router.get("/", authenticateToken, async (req, res) => {
 
     // Find the user's cart
     const userCart = await Cart.findOne({ user: user._id });
-
+    
     if (!userCart) {
-      return res.status(404).json({
-        statusText: "Not Found",
-        message: "Cart not found for the user.",
-      });
-    }
+        return res.status(200).json({
+          statusText: "Success",
+          cart: [],
+        });
+      }
 
     // Return the user's cart data in JSON format
     res.status(200).json({
