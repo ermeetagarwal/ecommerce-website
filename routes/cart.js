@@ -98,7 +98,7 @@ router.post("/", authenticateToken, async (req, res) => {
                 );
 
                 if (existingItem) {
-                    existingItem.quantity = quantity + 1; // Update the quantity
+                    existingItem.quantity = quantity; // Update the quantity
                 } else {
                     userCart.items.push({
                         product: product._id,
