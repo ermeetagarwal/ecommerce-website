@@ -51,6 +51,7 @@ router.post("/", authenticateToken, async (req, res) => {
                         subtotal: product.discountedPrice * 1,
                     });
                 }
+                userCart.markModified('items');
                 await userCart.save();
                 res.status(200).json({
                     statusText: "Success",
@@ -99,6 +100,8 @@ router.post("/", authenticateToken, async (req, res) => {
 
                 if (existingItem) {
                     existingItem.quantity = quantity; // Update the quantity
+                    existingItem.subtotal = existingItem.quantity * existingItem.price;
+                    userCart.markModified("items");
                 } else {
                     userCart.items.push({
                         product: product._id,
@@ -106,12 +109,12 @@ router.post("/", authenticateToken, async (req, res) => {
                     });
                 }
             }
-
             await userCart.save();
 
             res.status(200).json({
                 statusText: "Success",
                 message: "Cart updated.",
+
             });
         }
     } catch (err) {
