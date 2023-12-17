@@ -1,7 +1,19 @@
 const express = require("express");
 const router = express.Router();
+const Cart = require("../models/cart.js");
 const billingdetails = require("../models/checkout.js");
+const authenticateToken = require("../middleware/index.js");
 
+const generateOrderNumber = () => {
+  const prefix = 'ORD'; // You can customize the prefix
+  const timestamp = Date.now(); // Current timestamp
+  const random = Math.floor(Math.random() * 100000); // Random number between 0 and 999
+
+  // Concatenate the parts to form the order number
+  const orderNo = `${prefix}-${timestamp}-${random}`;
+
+  return orderNo;
+};
 // GET all billing details
 router.get("/billingdetails", async (req, res) => {
   try {
@@ -12,7 +24,13 @@ router.get("/billingdetails", async (req, res) => {
   }
 });
 
-router.post("/billingdetails", async (req, res) => {
+router.post("/billingdetails",authenticateToken, async (req, res) => {
+  const orderNo = generateOrderNumber();
+  const date = new Date().toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  });
     const {
       FirstName,
       LastName,
@@ -26,7 +44,12 @@ router.post("/billingdetails", async (req, res) => {
       OrderNote,
       PaymentMethod
     } = req.body;
-  
+    const user = req.user;
+    const userCart = await Cart.findOne({ user: user._id });
+    const yourorder = userCart;
+    userCart.items = [];
+    userCart.markModified('items');
+    await userCart.save(); 
     const newBillingDetail = new billingdetails({
       FirstName,
       LastName,
@@ -38,7 +61,10 @@ router.post("/billingdetails", async (req, res) => {
       Phone,
       Email,
       OrderNote,
-      PaymentMethod
+      PaymentMethod,
+      yourorder,
+      orderNo,
+      date
     });
   
     try {

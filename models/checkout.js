@@ -42,6 +42,13 @@ const checkoutschema = mongoose.Schema({
     PaymentMethod:{
         type: String,
         required: true,
+    },
+    yourorder:[],
+    orderNo:{
+        type:String
+    },
+    date:{
+        type:String
     }
 }); 
 const billingdetails = new mongoose.model("billingdetails",checkoutschema);
