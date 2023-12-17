@@ -43,7 +43,7 @@ const checkoutschema = mongoose.Schema({
         type: String,
         required: true,
     },
-    yourorder:[],
+    cart:[],
     orderNo:{
         type:String
     },
