@@ -38,7 +38,7 @@ router.post("/", authenticateToken, async (req, res) => {
                 );
 
                 if (existingItem) {
-                    existingItem.quantity = existingItem.quantity + 1; // Update the quantity
+                    existingItem.quantity = parseInt(existingItem.quantity) + (parseInt(cartUpdates.quantity) || 1); // Update the quantity
                     existingItem.subtotal =
                         existingItem.quantity * existingItem.price; //update the price
                     userCart.markModified("items");
@@ -46,7 +46,7 @@ router.post("/", authenticateToken, async (req, res) => {
                     userCart.items.push({
                         imgurl: product.imageUrl,
                         product: product.Title,
-                        quantity: 1,
+                        quantity: cartUpdates.quantity || 1,
                         price: product.discountedPrice,
                         subtotal: product.discountedPrice * 1,
                     });
@@ -158,7 +158,7 @@ router.get("/", authenticateToken, async (req, res) => {
 });
 
 // Add a PATCH route to remove a product from the user's cart
-router.patch("/", authenticateToken, async (req, res) => {
+router.post("/delete", authenticateToken, async (req, res) => {
     try {
         const { Title } = req.body;
 
