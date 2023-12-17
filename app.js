@@ -9,7 +9,7 @@ const userRouter = require("./routes/user.js");
 const Cart = require("./routes/cart.js");
 const dropaline = require("./routes/dal.js");
 const discountcode = require("./routes/discountcode.js");
-
+const checkout = require('./routes/checkout.js')
 const swaggerJSDoc = require("swagger-jsdoc");
 const swaggerUI = require("swagger-ui-express");
 const options = require("./config/swagger.js");
@@ -49,6 +49,7 @@ app.use("/api/product", productRouter);
 app.use("/user",userRouter);
 app.use("/cart",Cart)
 app.use("/api/dal",dropaline);
+app.use("/checkout",checkout);
 connectDB();
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

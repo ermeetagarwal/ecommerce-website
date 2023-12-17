@@ -1,12 +1,12 @@
 const express = require("express");
 const discountcode = require("../models/coupon.js");
+const authenticateToken = require("../middleware/index.js");
 
 const router = express.Router();
 
-router.post("/", async (req, res) => {
+router.post("/",authenticateToken, async (req, res) => {
   try {
     const couponCode = req.body.code; // Assuming the coupon code is present in the request body under the key 'code'
-    
     // Check if the coupon code exists in the database
     const existingCode = await discountcode.findOne({ code: couponCode });
 
