@@ -12,7 +12,7 @@ const generateOrderNumber = () => {
   return orderNo;
 };
 
-router.get("/billingdetails", async (req, res) => {
+router.get("/billingdetails",authenticateToken, async (req, res) => {
   try {
     const allBillingDetails = await billingdetails.find();
     res.json(allBillingDetails);
