@@ -16,6 +16,7 @@ router.post("/", async (req, res) => {
     const category = req.body.category;
     const description = req.body.description;
     const status = req.body.status;
+    const tags = req.body.tags || []; // Assuming tags are passed as an array in the request body
     let discountedPrice;
     if (basePrice !== null && discountPer !== null) {
       discountedPrice = basePrice - basePrice * (discountPer / 100);
@@ -37,6 +38,7 @@ router.post("/", async (req, res) => {
         description: description,
         status: status,
         discountedPrice: discountedPrice,
+        tags: tags,
       });
       const newintro = new productintro({
         Title: "product",
@@ -65,6 +67,7 @@ router.post("/", async (req, res) => {
         description: description,
         status: status,
         discountedPrice: discountedPrice,
+        tags: tags,
       });
       await newproduct.save();
       existingIntro.products.push(newproduct);
@@ -162,6 +165,7 @@ router.patch("/:productTitle", async (req, res) => {
         category: req.body.category || existingProduct.category,
         description: req.body.description || existingProduct.description,
         status: req.body.status || existingProduct.status,
+        tags: req.body.tags || existingProduct.tags, // Update tags
         discountedPrice:
           req.body.discountedPrice || existingProduct.discountedPrice,
       };
