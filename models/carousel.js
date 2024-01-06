@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const homeComponentSchema = mongoose.Schema({
+const carouselSchema = mongoose.Schema({
   Title: {
     type: String,
     required: true,
@@ -8,6 +8,6 @@ const homeComponentSchema = mongoose.Schema({
   imageUrl: String,
   Description: String,
 });
-const Homecomponent = new mongoose.model("Homecomponent", homeComponentSchema);
+const carousel = new mongoose.model("carousel", carouselSchema);
 
-module.exports = Homecomponent;
+module.exports = carousel;

@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const Homecomponent = require("../models/Homecomponent.js");
+const Homecomponent = require("./carousel.js");
 
 const introSchema = mongoose.Schema({
   Title: String,
