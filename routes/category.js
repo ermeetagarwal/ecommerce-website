@@ -23,7 +23,44 @@ router.post("/", async (req, res) => {
         res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 });
+router.get("/:categoryName", async (req, res) => {
+    try {
+        const categoryName = req.params.categoryName;
 
+        // Find the category by name
+        const category = await Category.findOne({ categoryName });
+
+        if (!category) {
+            return res.status(404).json({ success: false, message: "Category not found" });
+        }
+
+        // Find all products with the specified category
+        const products = await Product.find({ category: categoryName });
+
+        res.json({ success: true, products });
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+});
+router.get("/:onSale", async (req, res) => {
+    try {
+        const onSale = req.params.onSale;
+        let products;
+  
+        if (onSale === "onsaleyes") {
+            products = await Product.find({ discountPer: { $gt: 0 } });
+        } else if (onSale === "onsaleno") {
+            products = await Product.find({ discountPer: 0 });
+        }
+  
+        res.json({ success: true, products });
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+  });
+  
 router.get("/", async (req, res) => {
     try {
         const allCategories = await category.find();

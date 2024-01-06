@@ -19,7 +19,9 @@ router.post("/", async (req, res) => {
     let discountedPrice;
     if (basePrice !== null && discountPer !== null) {
       discountedPrice = basePrice - basePrice * (discountPer / 100);
-    } else {
+      // Convert discountedPrice to an integer
+      discountedPrice = parseInt(discountedPrice);
+  } else {
       discountedPrice = req.body.discountedPrice;
     }
     const existingIntro = await productintro.findOne({ Title: "product" });

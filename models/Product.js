@@ -15,6 +15,7 @@ const productSchema = mongoose.Schema({
   description: String,
   status: String,
   discountedPrice: Number,
+  tags: [String], // This adds a field 'tags' which is an array of strings
 });
 const Product = new mongoose.model("Product", productSchema);
 
