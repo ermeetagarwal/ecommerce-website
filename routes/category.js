@@ -1,6 +1,6 @@
 const express = require("express");
 const category = require("../models/category");
-
+const Product = require("../models/Product.js");
 const router = express.Router();
 
 router.post("/", async (req, res) => {
@@ -28,9 +28,9 @@ router.get("/:categoryTitle", async (req, res) => {
         const categoryTitle = req.params.categoryTitle;
 
         // Find the category by title
-        const category = await category.findOne({ category_title: categoryTitle });
+        const category1 = await category.findOne({ category_title: categoryTitle });
 
-        if (!category) {
+        if (!category1) {
             return res.status(404).json({ success: false, message: "Category not found" });
         }
 
