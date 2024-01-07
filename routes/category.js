@@ -23,19 +23,19 @@ router.post("/", async (req, res) => {
         res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 });
-router.get("/:categoryName", async (req, res) => {
+router.get("/:categoryTitle", async (req, res) => {
     try {
-        const categoryName = req.params.categoryName;
+        const categoryTitle = req.params.categoryTitle;
 
-        // Find the category by name
-        const category = await Category.findOne({ categoryName });
+        // Find the category by title
+        const category = await category.findOne({ category_title: categoryTitle });
 
         if (!category) {
             return res.status(404).json({ success: false, message: "Category not found" });
         }
 
         // Find all products with the specified category
-        const products = await Product.find({ category: categoryName });
+        const products = await Product.find({ category: categoryTitle });
 
         res.json({ success: true, products });
     } catch (error) {
@@ -43,6 +43,7 @@ router.get("/:categoryName", async (req, res) => {
         res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 });
+
 router.get("/:onSale", async (req, res) => {
     try {
         const onSale = req.params.onSale;
