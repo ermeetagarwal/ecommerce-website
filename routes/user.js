@@ -49,7 +49,7 @@ router.post("/register", async (req, res) => {
     res.status(500).send("An unexpected error occurred during registration.");
   }
 });
-router.get("/users", async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const users = await User.find({}, { password: 0 }); // Exclude password from the results
     res.status(200).json({
