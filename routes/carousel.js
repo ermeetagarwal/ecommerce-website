@@ -18,7 +18,8 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res) => {
     try {
         const title = req.body.title;
-        const imageUrl = req.body.imageUrl;
+        const imageUrl_desk = req.body.imageUrl_desk;
+        const imageUrl_mob = req.body.imageUrl_mob;
         const description = req.body.description;
 
         const existingCarousel = await carousel.findOne({ Title: title });
