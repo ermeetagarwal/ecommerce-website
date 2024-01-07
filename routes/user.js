@@ -49,6 +49,19 @@ router.post("/register", async (req, res) => {
     res.status(500).send("An unexpected error occurred during registration.");
   }
 });
+router.get("/users", async (req, res) => {
+  try {
+    const users = await User.find({}, { password: 0 }); // Exclude password from the results
+    res.status(200).json({
+      statusText: "Success",
+      users: users,
+    });
+  } catch (err) {
+    console.error("Error getting users:", err);
+    res.status(500).send("An unexpected error occurred while fetching users.");
+  }
+});
+
 router.post("/login", async (req, res) => {
   try {
     const use = await User.findOne({ email: req.body.email });
