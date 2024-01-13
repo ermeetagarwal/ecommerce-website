@@ -27,7 +27,7 @@ router.post("/", async (req, res) => {
         if (existingCarousel) {
             res.json({ success: false, message: "Carousel item already exists" });
         } else {
-            const newCarousel = new carousel({ Title: title, imageUrl, Description: description });
+            const newCarousel = new carousel({ Title: title, imageUrl_desk, imageUrl_mob, Description: description });
             await newCarousel.save();
             res.json({ success: true, message: "Carousel item added successfully" });
         }
