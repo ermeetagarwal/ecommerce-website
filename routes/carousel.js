@@ -53,6 +53,28 @@ router.delete("/:carouselTitle", async (req, res) => {
         res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 });
+// Partially update carousel item by Title
+router.patch("/:carouselTitle", async (req, res) => {
+    try {
+        const carouselTitle = req.params.carouselTitle;
+        const { title, imageUrl_desk, imageUrl_mob, description } = req.body;
+
+        const updatedCarousel = await carousel.findOneAndUpdate(
+            { Title: carouselTitle },
+            { $set: { Title: title, imageUrl_desk, imageUrl_mob, Description: description } },
+            { new: true }
+        );
+
+        if (!updatedCarousel) {
+            res.status(404).json({ success: false, message: "Carousel item not found" });
+        } else {
+            res.json({ success: true, message: "Carousel item partially updated successfully", updatedCarousel });
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+});
 
 module.exports = router;
 
