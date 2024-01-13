@@ -15,21 +15,23 @@ router.get("/", async (req, res) => {
 });
 
 // Create a new carousel item
+// Create a new carousel item
 router.post("/", async (req, res) => {
     try {
-        const title = req.body.title;
-        const imageUrl_desk = req.body.imageUrl_desk;
-        const imageUrl_mob = req.body.imageUrl_mob;
-        const description = req.body.description;
+        const { Title, Title2, imageUrl_desk, imageUrl_mob, description } = req.body;
 
-        const existingCarousel = await carousel.findOne({ Title: title });
+        if (!Title) {
+            return res.status(400).json({ success: false, message: "Title is required" });
+        }
+
+        const existingCarousel = await carousel.findOne({ Title });
 
         if (existingCarousel) {
-            res.json({ success: false, message: "Carousel item already exists" });
+            return res.json({ success: false, message: "Carousel item already exists" });
         } else {
-            const newCarousel = new carousel({ Title: title, imageUrl_desk, imageUrl_mob, Description: description });
+            const newCarousel = new carousel({ Title, Title2, imageUrl_desk, imageUrl_mob, Description: description });
             await newCarousel.save();
-            res.json({ success: true, message: "Carousel item added successfully" });
+            return res.json({ success: true, message: "Carousel item added successfully" });
         }
     } catch (error) {
         console.error("Error:", error);
@@ -57,11 +59,11 @@ router.delete("/:carouselTitle", async (req, res) => {
 router.patch("/:carouselTitle", async (req, res) => {
     try {
         const carouselTitle = req.params.carouselTitle;
-        const { title, imageUrl_desk, imageUrl_mob, description } = req.body;
+        const { title,title2, imageUrl_desk, imageUrl_mob, description } = req.body;
 
         const updatedCarousel = await carousel.findOneAndUpdate(
             { Title: carouselTitle },
-            { $set: { Title: title, imageUrl_desk, imageUrl_mob, Description: description } },
+            { $set: { Title: title,Title2:title2 ,imageUrl_desk, imageUrl_mob, Description: description } },
             { new: true }
         );
 

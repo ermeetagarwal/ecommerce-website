@@ -5,6 +5,7 @@ const carouselSchema = mongoose.Schema({
     required: true,
     unique: true, // This ensures the title must be unique
   },
+  Title2:String,
   imageUrl_desk: String,
   imageUrl_mob: String,
   Description: String,
