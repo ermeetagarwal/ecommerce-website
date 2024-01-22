@@ -48,7 +48,7 @@ router.post("/", authenticateToken, async (req, res) => {
                         product: product.Title,
                         quantity: cartUpdates.quantity || 1,
                         price: product.discountedPrice,
-                        subtotal: product.discountedPrice * 1,
+                        subtotal: product.discountedPrice * (cartUpdates.quantity || 1),
                     });
                 }
                 userCart.markModified('items');

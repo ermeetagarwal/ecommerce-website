@@ -37,7 +37,6 @@ const checkoutschema = mongoose.Schema({
     },
     OrderNote:{
         type:String,
-        required: true,
     },
     PaymentMethod:{
         type: String,
