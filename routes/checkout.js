@@ -12,7 +12,7 @@ const generateOrderNumber = () => {
   return orderNo;
 };
 
-router.get("/billingdetails",authenticateToken, async (req, res) => {
+router.get("/billingdetailsforadmin", async (req, res) => {
   try {
     const allBillingDetails = await billingdetails.find();
     res.json(allBillingDetails);
@@ -20,6 +20,18 @@ router.get("/billingdetails",authenticateToken, async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+router.get("/billingdetails", authenticateToken, async (req, res) => {
+  try {
+    const user = req.user;
+
+    // Find billing details for the specific user
+    const userBillingDetails = await billingdetails.find({ user: user._id  });
+    res.json(userBillingDetails);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 
 router.post("/billingdetails", authenticateToken, async (req, res) => {
   const orderNo = generateOrderNumber();
