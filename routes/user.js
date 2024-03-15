@@ -52,14 +52,15 @@ router.post("/register", async (req, res) => {
         text: `Your OTP for registration is ${otp}. It expires in 10 minutes.`,
       };
 
-      transporter.sendMail(mailOptions, (error, info) => {
+      transporter.sendMail(mailOptions, async (error, info) => {
         if (error) {
           console.error("Error sending OTP:", error);
-          res.status(500).send("An unexpected error occurred while sending OTP.");
+          await newUser.remove(); // Delete the user if sending OTP fails
+          return res.status(500).send("An unexpected error occurred while sending OTP.");
         } else {
           console.log("OTP sent:", info.response);
           const token = jwt.sign({ userId: newUser._id }, process.env.SECRET, {});
-
+      
           res.status(201).json({
             statusText: "Success",
             message: "User registered successfully. Check your email for OTP.",
