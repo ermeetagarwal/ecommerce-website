@@ -15,7 +15,6 @@ router.get("/", async (req, res) => {
 });
 
 // Create a new carousel item
-// Create a new carousel item
 router.post("/", async (req, res) => {
     try {
         const { Title, Title2, imageUrl_desk, imageUrl_mob, description } = req.body;

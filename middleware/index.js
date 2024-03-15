@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/user.js');
 
-const authenticateToken = (req, res, next) => {
+const authenticateToken = async (req, res, next) => {
   const token1 = req.header('Authorization');
   if (!token1) {
     return res.status(401).json({
@@ -25,6 +25,12 @@ const authenticateToken = (req, res, next) => {
           message: "User not found.",
         });
       }
+      if (!user.isVerified) {
+        return res.status(403).json({
+          statusText: "Forbidden",
+          message: "User email not verified.",
+        });
+      }
       req.user = user;
       next();
     } catch (err) {
@@ -33,6 +39,5 @@ const authenticateToken = (req, res, next) => {
     }
   });
 };
-
 
 module.exports = authenticateToken;

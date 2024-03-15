@@ -1,5 +1,6 @@
 const express = require('express');
 const dropaline = require('../models/dropaline.js');
+const nodemailer = require('nodemailer');
 
 const router = express.Router();
 
@@ -20,9 +21,34 @@ router.post("/",async(req,res)=>{
         });
         await newdal.save();
 
+        // Send email notification
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
+            }
+        });
+
+        const mailOptions = {
+            from: process.env.EMAIL_USER,
+            to: "meetagarwal507@gmail.com",
+            subject: "New dropaline posted",
+            text: `A new dropaline has been posted with the following details:\n\nName: ${name}\nEmail Address: ${emailaddress}\nSubject: ${subject}\nSelect an Option: ${selectanoption}\nMessage: ${message}`
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error("Error sending email:", error);
+            } else {
+                console.log("Email sent:", info.response);
+            }
+        });
+
         res.status(200).send("successfully send a line.");
     } catch(err){
-        return res.status(500).send("unable to post a line.")
+        console.error(err);
+        return res.status(500).send("Unable to post a line.");
     }
 });
 
@@ -36,3 +62,4 @@ router.get("/",async(req,res)=>{
     }
 });
 module.exports = router;
+

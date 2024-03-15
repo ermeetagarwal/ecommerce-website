@@ -11,6 +11,7 @@ const dropaline = require("./routes/dal.js");
 const discountcode = require("./routes/discountcode.js");
 const checkout = require('./routes/checkout.js');
 const category = require('./routes/category.js')
+const forgetpassword = require('./routes/forgetpassword.js')
 const swaggerJSDoc = require("swagger-jsdoc");
 const swaggerUI = require("swagger-ui-express");
 const options = require("./config/swagger.js");
@@ -52,8 +53,9 @@ app.use("/cart",Cart)
 app.use("/api/dal",dropaline);
 app.use("/checkout",checkout);
 app.use("/api/category",category);
+app.use("/api/forgetpassword",forgetpassword);
 connectDB();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 app.listen(port, () => {
   console.log("Server started at port ",port);
 });
