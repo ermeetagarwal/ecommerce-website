@@ -12,7 +12,7 @@ const discountcode = require("./routes/discountcode.js");
 const checkout = require('./routes/checkout.js');
 const category = require('./routes/category.js')
 const forgetpassword = require('./routes/forgetpassword.js');
-const payselect = require("./routes/enablepay.js")
+const payselect = require("./routes/enablepay.js");
 // const allowedOrigins = ["http://0.0.0.0:5500"];
 
 const app = express();
