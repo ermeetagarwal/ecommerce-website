@@ -1,6 +1,7 @@
 // routes/coupon.js
 const express = require("express");
 const discountcode = require("../models/coupon.js");
+const Cart  = require("../models/cart.js");
 const authenticateToken = require("../middleware/index.js");
 
 const router = express.Router();
@@ -17,6 +18,7 @@ router.post("/", authenticateToken, async (req, res) => {
             const cart = await Cart.findById(cartid);
             if (cart) {
                 cart.discountFromCode = existingCode.percentage;
+                cart.total = cart.total-(cart.total*(existingCode.percentage/100));
                 await cart.save();
                 res.json({ success: true, message: "Coupon applied successfully", discountPercentage: existingCode.percentage });
             } else {
