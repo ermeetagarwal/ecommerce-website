@@ -18,7 +18,8 @@ router.post("/", authenticateToken, async (req, res) => {
             const cart = await Cart.findById(cartid);
             if (cart) {
                 cart.discountFromCode = existingCode.percentage;
-                cart.total = cart.total-(cart.total*(existingCode.percentage/100));
+                const totaal = cart.items.reduce((total, item) => total + item.subtotal, 0) ;
+                cart.total = totaal-(cart.total*(existingCode.percentage/100));
                 await cart.save();
                 res.json({ success: true, message: "Coupon applied successfully", discountPercentage: existingCode.percentage });
             } else {
