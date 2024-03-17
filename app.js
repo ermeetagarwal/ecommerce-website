@@ -11,10 +11,8 @@ const dropaline = require("./routes/dal.js");
 const discountcode = require("./routes/discountcode.js");
 const checkout = require('./routes/checkout.js');
 const category = require('./routes/category.js')
-const forgetpassword = require('./routes/forgetpassword.js')
-const swaggerJSDoc = require("swagger-jsdoc");
-const swaggerUI = require("swagger-ui-express");
-const options = require("./config/swagger.js");
+const forgetpassword = require('./routes/forgetpassword.js');
+const payselect = require("./routes/enablepay.js")
 // const allowedOrigins = ["http://0.0.0.0:5500"];
 
 const app = express();
@@ -42,8 +40,6 @@ app.use(express.json());
 //     },
 //   })
 // );
-const swaggerSpec = swaggerJSDoc(options);
-app.use("/api-doc",swaggerUI.serve,swaggerUI.setup(swaggerSpec));
 
 app.use("/api/discountcode",discountcode);
 app.use("/api/carousel",carousel );
@@ -54,6 +50,7 @@ app.use("/api/dal",dropaline);
 app.use("/checkout",checkout);
 app.use("/api/category",category);
 app.use("/api/forgetpassword",forgetpassword);
+app.use("/api",payselect)
 connectDB();
 const port = process.env.PORT || 5000;
 app.listen(port, () => {

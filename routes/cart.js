@@ -40,7 +40,7 @@ router.post("/", authenticateToken, async (req, res) => {
                 if (existingItem) {
                     existingItem.quantity = parseInt(existingItem.quantity) + (parseInt(cartUpdates.quantity) || 1); // Update the quantity
                     existingItem.subtotal =
-                        existingItem.quantity * existingItem.price; //update the price
+                        existingItem.quantity * existingItem.price; // Update the subtotal
                     userCart.markModified("items");
                 } else {
                     userCart.items.push({
@@ -52,10 +52,12 @@ router.post("/", authenticateToken, async (req, res) => {
                     });
                 }
                 userCart.markModified('items');
+                userCart.total = userCart.items.reduce((total, item) => total + item.subtotal, 0) - (userCart.total * (req.body.discountPercentage / 100)); // Calculate total with discount
                 await userCart.save();
                 res.status(200).json({
                     statusText: "Success",
                     message: "Cart updated.",
+                    total: userCart.total,
                 });
             } else {
                 return res.status(400).json({
@@ -109,12 +111,13 @@ router.post("/", authenticateToken, async (req, res) => {
                     });
                 }
             }
+            userCart.total = userCart.items.reduce((total, item) => total + item.subtotal, 0) - (userCart.total * (req.body.discountPercentage / 100)); // Calculate total with discount
             await userCart.save();
 
             res.status(200).json({
                 statusText: "Success",
                 message: "Cart updated.",
-
+                total: userCart.total,
             });
         }
     } catch (err) {
@@ -122,6 +125,7 @@ router.post("/", authenticateToken, async (req, res) => {
         res.status(500).send("An unexpected error occurred.");
     }
 });
+
 
 router.get("/", authenticateToken, async (req, res) => {
     try {
@@ -139,23 +143,18 @@ router.get("/", authenticateToken, async (req, res) => {
             });
         }
 
-        // Calculate the total sum of all subtotals
-        const total = userCart.items.reduce(
-            (acc, item) => acc + item.subtotal,
-            0
-        );
-
         // Return the user's cart data along with the total in JSON format
         res.status(200).json({
             statusText: "Success",
             cart: userCart.items,
-            total: total,
+            total: userCart.total || 0, // Use the total from the cart if it exists, otherwise default to 0
         });
     } catch (err) {
         console.error("Error retrieving cart:", err);
         res.status(500).send("An unexpected error occurred.");
     }
 });
+
 
 // Add a PATCH route to remove a product from the user's cart
 router.post("/delete", authenticateToken, async (req, res) => {

@@ -48,7 +48,13 @@ const checkoutschema = mongoose.Schema({
     },
     date:{
         type:String
+    },
+    payuTransactionId: {
+        type: String
+    },
+    payuTransactionStatus: {
+        type: String
     }
 }); 
-const billingdetails = new mongoose.model("billingdetails",checkoutschema);
+const billingdetails = new mongoose.model("billingdetails", checkoutschema);
 module.exports = billingdetails;

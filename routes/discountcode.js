@@ -4,15 +4,23 @@ const authenticateToken = require("../middleware/index.js");
 
 const router = express.Router();
 
-router.post("/",authenticateToken, async (req, res) => {
+router.post("/", authenticateToken, async (req, res) => {
   try {
     const couponCode = req.body.code; // Assuming the coupon code is present in the request body under the key 'code'
+    const cartid = req.body.cartid;
     // Check if the coupon code exists in the database
     const existingCode = await discountcode.findOne({ code: couponCode });
 
     if (existingCode) {
-      // Coupon code exists, send JSON response with discount percentage
-      res.json({ success: true, message: "Coupon applied successfully", discountPercentage: existingCode.discountPercentage });
+      // Coupon code exists, set the discount percentage to the cart
+      const cart = await Cart.findById(cartid);
+      if (cart) {
+        cart.discountFromCode = existingCode.discountPercentage;
+        await cart.save();
+        res.json({ success: true, message: "Coupon applied successfully", discountPercentage: existingCode.discountPercentage });
+      } else {
+        res.status(404).json({ success: false, message: "Cart not found" });
+      }
     } else {
       // Coupon code not found
       res.json({ success: false, message: "Invalid coupon code" });
@@ -22,6 +30,7 @@ router.post("/",authenticateToken, async (req, res) => {
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 });
+
 
 router.get("/list", async (req, res) => {
     try {
@@ -80,4 +89,5 @@ router.delete("/:code", async (req, res) => {
       res.status(500).json({ success: false, message: "Internal Server Error" });
     }
   });  
-module.exports = router;
+
+  module.exports = router;
