@@ -112,7 +112,8 @@ router.post("/", authenticateToken, async (req, res) => {
                     });
                 }
             }
-            userCart.total = userCart.items.reduce((total, item) => total + item.subtotal, 0) - (userCart.total * (req.body.discountPercentage / 100)); // Calculate total with discount
+            const totaal = userCart.items.reduce((total, item) => total + item.subtotal, 0) ;
+            userCart.total = totaal - (((userCart.discountFromCode)/100)*totaal)  // Calculate total with discount
             await userCart.save();
 
             res.status(200).json({
