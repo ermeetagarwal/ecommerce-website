@@ -52,7 +52,7 @@ router.post("/", authenticateToken, async (req, res) => {
                     });
                 }
                 userCart.markModified('items');
-                userCart.total = userCart.items.reduce((total, item) => total + item.subtotal, 0) - (userCart.total * (req.body.discountPercentage / 100)); // Calculate total with discount
+                userCart.total = userCart.items.reduce((total, item) => total + item.subtotal, 0) ; // Calculate total with discount
                 await userCart.save();
                 res.status(200).json({
                     statusText: "Success",
