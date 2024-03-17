@@ -25,7 +25,7 @@ router.get("/billingdetails", authenticateToken, async (req, res) => {
     const user = req.user;
 
     // Find billing details for the specific user
-    const userBillingDetails = await billingdetails.find({ user: user._id  });
+    const userBillingDetails = await billingdetails.find({ "cart.user": user._id });
     res.json(userBillingDetails);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -43,7 +43,7 @@ router.post("/billingdetails", authenticateToken, async (req, res) => {
 
   try {
     const user = req.user;
-    const userCart = await Cart.findOne({ user: user._id });
+    const userCart = await Cart.findOne({ user: user._id.toString() });
 
     // Create a new billing detail object
     const newBillingDetail = new billingdetails({
