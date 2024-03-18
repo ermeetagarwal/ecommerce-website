@@ -9,13 +9,13 @@ const router = express.Router();
 router.post("/", authenticateToken, async (req, res) => {
     try {
         const couponCode = req.body.code; // Assuming the coupon code is present in the request body under the key 'code'
-        const cartid = req.body.cartid;
+        const user = req.user;
         // Check if the coupon code exists in the database
         const existingCode = await discountcode.findOne({ code: couponCode });
 
         if (existingCode) {
             // Coupon code exists, set the discount percentage to the cart
-            const cart = await Cart.findById(cartid);
+            const cart = await Cart.findOne({ user: user._id });
             if (cart) {
                 cart.discountFromCode = existingCode.percentage;
                 const totaal = cart.items.reduce((total, item) => total + item.subtotal, 0) ;
