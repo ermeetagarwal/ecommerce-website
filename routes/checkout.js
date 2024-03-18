@@ -5,7 +5,7 @@ const billingdetails = require("../models/checkout.js");
 const authenticateToken = require("../middleware/index.js");
 const nodemailer = require("nodemailer");
 const request = require('request');
-
+const crypto =  require('crypto');
 const generateOrderNumber = () => {
   const prefix = 'ORD';
   const timestamp = Date.now();
@@ -74,32 +74,38 @@ router.post("/billingdetails", authenticateToken, async (req, res) => {
     const savedBillingDetail = await newBillingDetail.save();
 
     // Send payment request to PayU
-    const formData = {
+    const data = {
       key: process.env.PAYU_MERCHANT_KEY,
-      txnid: `TXN_${orderNo}`,
+      salt: process.env.PAYU_SALT,
+      txnid: `${orderNo}`,
       amount: userCart.total, // Use total from cartSchema
       productinfo: JSON.stringify(userCart.items), // Convert items array to JSON string
       firstname: req.body.FirstName,
       email: req.body.Email,
       phone: req.body.Phone,
-      surl: process.env.PAYU_SUCCESS_URL,
-      furl: process.env.PAYU_FAILURE_URL,
-      service_provider: 'payu_paisa',
+      // surl: process.env.PAYU_SUCCESS_URL,
+      // furl: process.env.PAYU_FAILURE_URL,
+      // service_provider: 'payu_paisa',
     };
+    const cryp = crypto.createHash('sha512');
+    const string = `${data.key}|${data.txnid}|${data.amount}|${data.productinfo}|${data.firstname}|${data.email}|${data.phone}||||||${data.salt}`;
+    
+    cryp.update(string);
+    const hash = cryp.digest('hex');
+    
+    return res.status(200).send({
+      hash: hash,
+      transactionId : data.txnid,
+    })
 
-    const hashString = `${formData.key}|${formData.txnid}|${formData.amount}|${formData.productinfo}|${formData.firstname}|${formData.email}|||||||||||${process.env.PAYU_SALT}`;
-        const hash = require('crypto').createHash('sha512').update(hashString).digest('hex');
-
-        formData.hash = hash;
-
-        request.post({ url: process.env.PAYU_PAYMENT_URL, form: formData }, (error, response, body) => {
-            if (error) {
-                console.error('Error:', error);
-                return res.status(500).json({ message: 'Failed to process payment' });
-            }
-            // Redirect user to PayU payment page
-            res.redirect(response.headers.location);
-        });
+        // request.post({ url: process.env.PAYU_PAYMENT_URL, form: formData }, (error, response, body) => {
+        //     if (error) {
+        //         console.error('Error:', error);
+        //         return res.status(500).json({ message: 'Failed to process payment' });
+        //     }
+        //     // Redirect user to PayU payment page
+        //     res.redirect(response.headers.location);
+        // });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
