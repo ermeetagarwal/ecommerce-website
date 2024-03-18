@@ -150,6 +150,7 @@ router.get("/", authenticateToken, async (req, res) => {
             statusText: "Success",
             cart: userCart.items,
             total: userCart.total || 0, // Use the total from the cart if it exists, otherwise default to 0
+            discountFromCode: userCart.discountFromCode,
         });
     } catch (err) {
         console.error("Error retrieving cart:", err);
