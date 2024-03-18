@@ -90,7 +90,15 @@ router.post("/billingdetails", authenticateToken, async (req, res) => {
       // service_provider: 'payu_paisa',
     };
     const cryp = crypto.createHash('sha512');
-    const string = `${data.key}|${data.txnid}|${data.amount}|${data.productinfo}|${data.firstname}|${data.email}|${data.phone}||||||${data.salt}`;
+    // const string = `${data.key}|${data.txnid}|${data.amount}|${data.productinfo}|${data.firstname}|${data.email}|${data.phone}||||||${data.salt}`;
+    const string = hashString = data.key
+    + '|' + data.txnid 
+    + '|' + data.amount 
+    + '|' + data.productinfo 
+    + '|' + data.firstname 
+    + '|' + data.email 
+    + '|' + '||||||||||' 
+    + data.salt;
     
     cryp.update(string);
     const hash = cryp.digest('hex');
