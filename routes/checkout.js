@@ -67,6 +67,7 @@ router.post("/billingdetails", authenticateToken, async (req, res) => {
     
     // Clear the user's cart
     userCart.items = [];
+    userCart.total=0;
     await userCart.markModified('items');
     await userCart.save();
 
