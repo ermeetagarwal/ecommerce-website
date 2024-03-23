@@ -37,100 +37,171 @@ router.get("/billingdetails", authenticateToken, async (req, res) => {
 });
 
 router.post("/billingdetails", authenticateToken, async (req, res) => {
-    const orderNo = generateOrderNumber();
-    const date = new Date().toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-    });
+  const orderNo = generateOrderNumber();
+  const date = new Date().toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+  });
 
-    try {
-        const user = req.user;
-        const userCart = await Cart.findOne({ user: user._id.toString() });
+  try {
+      const user = req.user;
+      const userCart = await Cart.findOne({ user: user._id.toString() });
 
-        // Create a new billing detail object
-        const newBillingDetail = new billingdetails({
-            FirstName: req.body.FirstName,
-            LastName: req.body.LastName,
-            CompanyName: req.body.CompanyName,
-            StreetAddress: req.body.StreetAddress,
-            city: req.body.city,
-            state: req.body.state,
-            PinCode: req.body.PinCode,
-            Phone: req.body.Phone,
-            Email: req.body.Email,
-            OrderNote: req.body.OrderNote,
-            PaymentMethod: req.body.PaymentMethod,
-            cart: userCart.toObject(), // Save the user's cart directly
-            orderNo,
-            date,
+      // Create a new billing detail object
+      const newBillingDetail = new billingdetails({
+          FirstName: req.body.FirstName,
+          LastName: req.body.LastName,
+          CompanyName: req.body.CompanyName,
+          StreetAddress: req.body.StreetAddress,
+          city: req.body.city,
+          state: req.body.state,
+          PinCode: req.body.PinCode,
+          Phone: req.body.Phone,
+          Email: req.body.Email,
+          OrderNote: req.body.OrderNote,
+          PaymentMethod: req.body.PaymentMethod,
+          cart: userCart.toObject(), // Save the user's cart directly
+          orderNo,
+          date,
+      });
+
+      // Clear the user's cart
+      userCart.items = [];
+      userCart.total = 0;
+      userCart.discountFromCode = 0;
+      await userCart.markModified("items");
+      await userCart.save();
+
+      // Save the new billing detail
+      const savedBillingDetail = await newBillingDetail.save();
+
+      if (req.body.PaymentMethod === 'cod') {
+        // If payment method is Cash on Delivery (COD), send email directly to customer and owner
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS,
+            },
         });
 
-        // Send payment request to PayU
-        const data = {
-            key: process.env.PAYU_MERCHANT_KEY,
-            txnid: `${orderNo}`,
-            amount: Math.round(userCart.total), // Use total from cartSchema
-            productinfo: userCart.items, // Convert items array to JSON string
-            firstname: req.body.FirstName,
-            email: req.body.Email,
-            phone: req.body.Phone,
-            surl: process.env.PAYU_SUCCESS_URL,
-            furl: process.env.PAYU_FAILURE_URL,
-            // service_provider: 'payu_paisa',
+        const ownerMailOptions = {
+            from: process.env.EMAIL_USER,
+            to: process.env.OWNER_EMAIL, // Email of the owner
+            subject: "New order received!",
+            html: `
+                <h1>New order received!</h1>
+                <p>Order Number: ${orderNo}</p>
+                <p>Order Date: ${date}</p>
+                <p>Name: ${req.body.FirstName} ${req.body.LastName}</p>
+                <p>Email: ${req.body.Email}</p>
+                <p>Phone: ${req.body.Phone}</p>
+                <p>Payment Method: ${req.body.PaymentMethod}</p>
+                <h2>Products:</h2>
+                <ul>
+                    ${userCart.items
+                        .map(
+                            (item) => `
+                            <li>${item.quantity} x ${item.product} - ${item.subtotal}</li>
+                        `
+                        )
+                        .join("")}
+                </ul>
+                <p>Total: ${Math.round(userCart.total)}</p>
+            `,
         };
-        const cryp = crypto.createHash("sha512");
-        // const string = `${data.key}|${data.txnid}|${data.amount}|${data.productinfo}|${data.firstname}|${data.email}|${data.phone}||||||${data.salt}`;
-        const string = (hashString =
-            data.key +
-            "|" +
-            data.txnid +
-            "|" +
-            data.amount +
-            "|" +
-            data.productinfo +
-            "|" +
-            data.firstname +
-            "|" +
-            data.email +
-            "|" +
-            "||||||||||" +
-            process.env.PAYU_SALT);
 
-        cryp.update(string);
-        const hash = cryp.digest("hex");
+        transporter.sendMail(ownerMailOptions, (error, info) => {
+            if (error) {
+                console.error(error);
+            } else {
+                console.log("Owner email sent: " + info.response);
+            }
+        });
 
-        data.hash = hash;
+        const customerDetailsMailOptions = {
+            from: process.env.EMAIL_USER,
+            to: req.body.Email,
+            subject: "Order Details",
+            html: `
+                <h1>Order Details</h1>
+                <p>Order Number: ${orderNo}</p>
+                <p>Order Date: ${date}</p>
+                <p>Name: ${req.body.FirstName} ${req.body.LastName}</p>
+                <p>Email: ${req.body.Email}</p>
+                <p>Phone: ${req.body.Phone}</p>
+                <p>Payment Method: ${req.body.PaymentMethod}</p>
+                <h2>Products:</h2>
+                <ul>
+                    ${userCart.items
+                        .map(
+                            (item) => `
+                            <li>${item.quantity} x ${item.product} - ${item.subtotal}</li>
+                        `
+                        )
+                        .join("")}
+                </ul>
+                <p>Total: ${Math.round(userCart.total)}</p>
+            `,
+        };
 
-        console.log(data);
-        console.log(string);
-
-        // Clear the user's cart
-        userCart.items = [];
-        userCart.total = 0;
-        userCart.discountFromCode = 0;
-        await userCart.markModified("items");
-        await userCart.save();
-
-        // Save the new billing detail
-        const savedBillingDetail = await newBillingDetail.save();
+        transporter.sendMail(customerDetailsMailOptions, (error, info) => {
+            if (error) {
+                console.error(error);
+            } else {
+                console.log("Customer details email sent: " + info.response);
+            }
+        });
 
         return res.status(200).send({
-            data: data,
+            message: "Order placed successfully!",
+            orderNo,
         });
+    } else {
+          // For online payment methods, continue with payment gateway integration
+          const data = {
+              key: process.env.PAYU_MERCHANT_KEY,
+              txnid: `${orderNo}`,
+              amount: Math.round(userCart.total), // Use total from cartSchema
+              productinfo: userCart.items, // Convert items array to JSON string
+              firstname: req.body.FirstName,
+              email: req.body.Email,
+              phone: req.body.Phone,
+              surl: process.env.PAYU_SUCCESS_URL,
+              furl: process.env.PAYU_FAILURE_URL,
+              // service_provider: 'payu_paisa',
+          };
+          const cryp = crypto.createHash("sha512");
+          const string = (hashString =
+              data.key +
+              "|" +
+              data.txnid +
+              "|" +
+              data.amount +
+              "|" +
+              data.productinfo +
+              "|" +
+              data.firstname +
+              "|" +
+              data.email +
+              "|" +
+              "||||||||||" +
+              process.env.PAYU_SALT);
 
-        // request.post({ url: process.env.PAYU_PAYMENT_URL, form: formData }, (error, response, body) => {
-        //     if (error) {
-        //         console.error('Error:', error);
-        //         return res.status(500).json({ message: 'Failed to process payment' });
-        //     }
-        //     // Redirect user to PayU payment page
-        //     res.redirect(response.headers.location);
-        // });
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
+          cryp.update(string);
+          const hash = cryp.digest("hex");
+
+          data.hash = hash;
+          return res.status(200).send({
+              data: data,
+          });
+      }
+  } catch (error) {
+      res.status(400).json({ message: error.message });
+  }
 });
+
 router.post("/paymentresponse", async (req, res) => {
     const status = req.body.status; // Payment status from the payment gateway
     const orderNo = req.body.txnid; // Transaction ID or order number from the payment gateway
@@ -161,9 +232,6 @@ router.post("/paymentresponse", async (req, res) => {
                 pass: process.env.EMAIL_PASS,
             },
         });
-
-        console.log(order);
-        console.log(order.cart[0].items);
 
         // Send a thank you email to the customer
         const customerMailOptions = {
