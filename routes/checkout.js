@@ -103,9 +103,10 @@ router.post("/billingdetails", authenticateToken, async (req, res) => {
     cryp.update(string);
     const hash = cryp.digest('hex');
     
+    data.hash = hash;
+    
     return res.status(200).send({
-      hash: hash,
-      transactionId : data.txnid,
+      data: data
     })
 
         // request.post({ url: process.env.PAYU_PAYMENT_URL, form: formData }, (error, response, body) => {
