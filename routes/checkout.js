@@ -85,8 +85,8 @@ router.post("/billingdetails", authenticateToken, async (req, res) => {
       firstname: req.body.FirstName,
       email: req.body.Email,
       phone: req.body.Phone,
-      // surl: process.env.PAYU_SUCCESS_URL,
-      // furl: process.env.PAYU_FAILURE_URL,
+      surl: process.env.PAYU_SUCCESS_URL,
+      furl: process.env.PAYU_FAILURE_URL,
       // service_provider: 'payu_paisa',
     };
     const cryp = crypto.createHash('sha512');
