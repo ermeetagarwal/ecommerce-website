@@ -5,6 +5,7 @@ const billingdetails = require("../models/checkout.js");
 const authenticateToken = require("../middleware/index.js");
 const nodemailer = require("nodemailer");
 const request = require("request");
+const { authenticateToken, authenticateAdminToken } = require("../middleware/index.js");
 const crypto = require("crypto");
 const generateOrderNumber = () => {
     const prefix = "ORD";
@@ -14,7 +15,7 @@ const generateOrderNumber = () => {
     return orderNo;
 };
 
-router.get("/billingdetailsforadmin", async (req, res) => {
+router.get("/billingdetailsforadmin", authenticateAdminToken,async (req, res) => {
     try {
         const allBillingDetails = await billingdetails.find();
         res.json(allBillingDetails);

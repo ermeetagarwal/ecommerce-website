@@ -2,7 +2,7 @@
 const express = require("express");
 const discountcode = require("../models/coupon.js");
 const Cart  = require("../models/cart.js");
-const authenticateToken = require("../middleware/index.js");
+const { authenticateToken, authenticateAdminToken } = require("../middleware/index.js");
 
 const router = express.Router();
 
@@ -35,7 +35,7 @@ router.post("/", authenticateToken, async (req, res) => {
     }
 });
 
-router.get("/list", async (req, res) => {
+router.get("/list",authenticateAdminToken, async (req, res) => {
     try {
         // Fetch all coupons from the database
         const coupons = await discountcode.find({}, { _id: 0, __v: 0 });
@@ -47,7 +47,7 @@ router.get("/list", async (req, res) => {
     }
 });
 
-router.post("/add", async (req, res) => {
+router.post("/add",authenticateAdminToken, async (req, res) => {
     try {
         const { code, percentage } = req.body; // Assuming both code and percentage are present in the request body
 
@@ -69,7 +69,7 @@ router.post("/add", async (req, res) => {
     }
 });
 
-router.delete("/:code", async (req, res) => {
+router.delete("/:code", authenticateAdminToken,async (req, res) => {
     try {
         const couponCode = req.params.code;
 

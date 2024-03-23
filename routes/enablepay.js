@@ -1,9 +1,9 @@
 const express = require("express");
 const EnablePayMode = require("../models/enablepaymode.js");
-const authenticateToken = require("../middleware/index.js");
+const { authenticateToken, authenticateAdminToken } = require("../middleware/index.js");
 const router = express.Router();
 // POST route to set payment method status
-router.post("/enablepaymode", async (req, res) => {
+router.post("/enablepaymode",authenticateAdminToken, async (req, res) => {
   try {
     const { cod, online } = req.body;
 
@@ -18,7 +18,7 @@ router.post("/enablepaymode", async (req, res) => {
 });
 
 // GET route to get payment method status
-router.get("/enablepaymode", async (req, res) => {
+router.get("/enablepaymode",authenticateAdminToken, async (req, res) => {
   try {
     const enablePayMode = await EnablePayMode.findOne();
     if (!enablePayMode) {

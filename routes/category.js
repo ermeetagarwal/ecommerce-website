@@ -2,8 +2,9 @@ const express = require("express");
 const category = require("../models/category");
 const Product = require("../models/Product.js");
 const router = express.Router();
+const { authenticateToken, authenticateAdminToken } = require("../middleware/index.js");
 
-router.post("/", async (req, res) => {
+router.post("/",authenticateAdminToken, async (req, res) => {
     try {
         const category_title = req.body.category;
         const img = req.body.img;
@@ -23,7 +24,7 @@ router.post("/", async (req, res) => {
         res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 });
-router.get("/:categoryTitle", async (req, res) => {
+router.get("/:categoryTitle", authenticateAdminToken,async (req, res) => {
     try {
         const categoryTitle = req.params.categoryTitle;
 
@@ -44,7 +45,7 @@ router.get("/:categoryTitle", async (req, res) => {
     }
 });
 
-router.get("/:onSale", async (req, res) => {
+router.get("/:onSale", authenticateAdminToken,async (req, res) => {
     try {
         const onSale = req.params.onSale;
         let products;
@@ -62,7 +63,7 @@ router.get("/:onSale", async (req, res) => {
     }
   });
   
-router.get("/", async (req, res) => {
+router.get("/", authenticateAdminToken,async (req, res) => {
     try {
         const allCategories = await category.find();
         res.json({ success: true, categories: allCategories });
@@ -73,7 +74,7 @@ router.get("/", async (req, res) => {
 });
 
 // Delete category by category_title
-router.delete("/:categoryTitle", async (req, res) => {
+router.delete("/:categoryTitle", authenticateAdminToken,async (req, res) => {
     try {
         const categoryTitle = req.params.categoryTitle;
         const deletedCategory = await category.findOneAndDelete({ category_title: categoryTitle });

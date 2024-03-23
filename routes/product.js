@@ -1,11 +1,12 @@
 const express = require("express");
 const productintro = require("../models/productintro.js");
 const Product = require("../models/Product.js");
+const { authenticateToken, authenticateAdminToken } = require("../middleware/index.js");
 
 const router = express.Router();
 
 
-router.post("/", async (req, res) => {
+router.post("/",authenticateAdminToken, async (req, res) => {
   try {
     const Title = req.body.Title;
     const imageUrl = req.body.imageUrl;
@@ -117,7 +118,7 @@ router.get("/:productTitle", async (req, res) => {
   }
 });
 
-router.delete("/:productTitle", async (req, res) => {
+router.delete("/:productTitle",authenticateAdminToken, async (req, res) => {
   try {
     const routeTitle = req.params.productTitle;
     const data = await productintro.findOne({ Title: "product" });
@@ -146,7 +147,7 @@ router.delete("/:productTitle", async (req, res) => {
   }
 });
 
-router.patch("/:productTitle", async (req, res) => {
+router.patch("/:productTitle",authenticateAdminToken, async (req, res) => {
   try {
     const routeTitle = req.params.productTitle;
     const data = await productintro.findOne({ Title: "product" });

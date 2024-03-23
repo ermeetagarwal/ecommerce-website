@@ -1,6 +1,7 @@
 const express = require('express');
 const dropaline = require('../models/dropaline.js');
 const nodemailer = require('nodemailer');
+const { authenticateToken, authenticateAdminToken } = require("../middleware/index.js");
 
 const router = express.Router();
 
@@ -52,7 +53,7 @@ router.post("/",async(req,res)=>{
     }
 });
 
-router.get("/",async(req,res)=>{
+router.get("/",authenticateAdminToken,async(req,res)=>{
     try{
         const data = await dropaline.find();
         res.status(200).json(data);

@@ -39,6 +39,38 @@ const authenticateToken = async (req, res, next) => {
     }
   });
 };
+const authenticateAdminToken = (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
 
-module.exports = authenticateToken;
+  if (!token) {
+    return res.status(401).json({
+      statusText: "Unauthorized",
+      message: "Missing token",
+    });
+  }
 
+  jwt.verify(token, process.env.SECRET_ADMIN, (err, decoded) => {
+    if (err) {
+      return res.status(403).json({
+        statusText: "Forbidden",
+        message: "Invalid token",
+      });
+    }
+
+    if (
+      req.body.email === process.env.ADMIN_USERNAME &&
+      req.body.password === process.env.ADMIN_PASSWORD
+    ) {
+      req.userId = decoded.userId;
+      next();
+    } else {
+      return res.status(401).json({
+        statusText: "Unauthorized",
+        message: "Invalid credentials",
+      });
+    }
+  });
+};
+
+module.exports = { authenticateToken, authenticateAdminToken };

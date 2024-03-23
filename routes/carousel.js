@@ -1,6 +1,6 @@
 const express = require("express");
 const carousel = require("../models/carousel");
-
+const { authenticateToken, authenticateAdminToken } = require("../middleware/index.js");
 const router = express.Router();
 
 // Get all carousel items
@@ -15,7 +15,7 @@ router.get("/", async (req, res) => {
 });
 
 // Create a new carousel item
-router.post("/", async (req, res) => {
+router.post("/",authenticateAdminToken, async (req, res) => {
     try {
         const { Title, Title2, imageUrl_desk, imageUrl_mob, description } = req.body;
 
@@ -39,7 +39,7 @@ router.post("/", async (req, res) => {
 });
 
 // Delete carousel item by Title
-router.delete("/:carouselTitle", async (req, res) => {
+router.delete("/:carouselTitle", authenticateAdminToken,async (req, res) => {
     try {
         const carouselTitle = req.params.carouselTitle;
         const deletedCarousel = await carousel.findOneAndDelete({ Title: carouselTitle });
@@ -55,7 +55,7 @@ router.delete("/:carouselTitle", async (req, res) => {
     }
 });
 // Partially update carousel item by Title
-router.patch("/:carouselTitle", async (req, res) => {
+router.patch("/:carouselTitle",authenticateAdminToken, async (req, res) => {
     try {
         const carouselTitle = req.params.carouselTitle;
         const { title,title2, imageUrl_desk, imageUrl_mob, description } = req.body;

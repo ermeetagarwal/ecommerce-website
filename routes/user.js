@@ -3,6 +3,7 @@ const User = require("../models/user.js");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
+const { authenticateToken, authenticateAdminToken } = require("../middleware/index.js");
 
 const router = express.Router();
 
@@ -80,7 +81,7 @@ router.post("/register", async (req, res) => {
 });
 
 
-router.get("/", async (req, res) => {
+router.get("/",authenticateAdminToken, async (req, res) => {
   try {
     const users = await User.find({}, { password: 0 });
     res.status(200).json({
