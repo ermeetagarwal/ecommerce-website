@@ -52,8 +52,9 @@ const checkoutschema = mongoose.Schema({
     payuTransactionId: {
         type: String
     },
-    payuTransactionStatus: {
-        type: String
+    paymentStatus: {
+        type: String,
+        default: "failed"
     }
 }); 
 const billingdetails = new mongoose.model("billingdetails", checkoutschema);

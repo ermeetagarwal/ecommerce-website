@@ -13,9 +13,12 @@ const checkout = require('./routes/checkout.js');
 const category = require('./routes/category.js')
 const forgetpassword = require('./routes/forgetpassword.js');
 const payselect = require("./routes/enablepay.js");
+const bodyParser = require('body-parser');
 // const allowedOrigins = ["http://0.0.0.0:5500"];
 
 const app = express();
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 app.use(cors());
 // Enable CORS for all routes
 // app.use((req, res, next) => {
