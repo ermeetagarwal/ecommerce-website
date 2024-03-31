@@ -40,16 +40,14 @@ const authenticateToken = async (req, res, next) => {
   });
 };
 const authenticateAdminToken = (req, res, next) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
-
-  if (!token) {
+  const authHeader = req.header("Authorization");
+  if (!authHeader) {
     return res.status(401).json({
       statusText: "Unauthorized",
       message: "Missing token",
     });
   }
-
+  const token = authHeader.split(' ')[1];
   jwt.verify(token, process.env.SECRET_ADMIN, (err, decoded) => {
     if (err) {
       return res.status(403).json({
@@ -58,19 +56,10 @@ const authenticateAdminToken = (req, res, next) => {
       });
     }
 
-    if (
-      req.body.email === process.env.ADMIN_USERNAME &&
-      req.body.password === process.env.ADMIN_PASSWORD
-    ) {
-      req.userId = decoded.userId;
-      next();
-    } else {
-      return res.status(401).json({
-        statusText: "Unauthorized",
-        message: "Invalid credentials",
-      });
-    }
-  });
+    req.userId = decoded.userId;
+    next();
+});
+
 };
 
 module.exports = { authenticateToken, authenticateAdminToken };
