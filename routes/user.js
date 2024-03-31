@@ -54,7 +54,7 @@ router.post("/register", async (req, res) => {
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: req.body.email,
-      subject: "OTP for registration",
+      subject: "OTP for registration in AgarwalFoods.co.in",
       text: `Your OTP for registration is ${otp}. It expires in 10 minutes.`,
     };
 

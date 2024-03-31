@@ -123,7 +123,7 @@ router.post("/billingdetails", authenticateToken, async (req, res) => {
         const customerDetailsMailOptions = {
             from: process.env.EMAIL_USER,
             to: req.body.Email,
-            subject: "Order Details",
+            subject: "Confirmation: Your Order at Agarwal Foods is Being Processed!",
             html: `
                 <h1>Order Details</h1>
                 <p>Order Number: ${orderNo}</p>

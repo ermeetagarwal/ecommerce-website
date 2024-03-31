@@ -33,7 +33,7 @@ router.post("/",async(req,res)=>{
 
         const mailOptions = {
             from: process.env.EMAIL_USER,
-            to: "meetagarwal507@gmail.com",
+            to: process.env.OWNER_EMAIL,
             subject: "New dropaline posted",
             text: `A new dropaline has been posted with the following details:\n\nName: ${name}\nEmail Address: ${emailaddress}\nSubject: ${subject}\nSelect an Option: ${selectanoption}\nMessage: ${message}`
         };
