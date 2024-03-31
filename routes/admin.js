@@ -1,5 +1,6 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
+const router = express.Router();
 router.post("/login", async (req, res) => {
     try {
       const username = req.body.email;
@@ -25,4 +26,4 @@ router.post("/login", async (req, res) => {
       return res.status(500).send("An unexpected error occurred.");
     }
   });
-  
+  module.exports = router;

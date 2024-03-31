@@ -12,6 +12,7 @@ const discountcode = require("./routes/discountcode.js");
 const checkout = require('./routes/checkout.js');
 const category = require('./routes/category.js')
 const forgetpassword = require('./routes/forgetpassword.js');
+const admin = require('./routes/admin.js');
 const payselect = require("./routes/enablepay.js");
 const bodyParser = require('body-parser');
 // const allowedOrigins = ["http://0.0.0.0:5500"];
@@ -52,6 +53,7 @@ app.use("/cart",Cart)
 app.use("/api/dal",dropaline);
 app.use("/checkout",checkout);
 app.use("/api/category",category);
+app.use("/api/admin",admin);
 app.use("/api/forgetpassword",forgetpassword);
 app.use("/api",payselect)
 connectDB();

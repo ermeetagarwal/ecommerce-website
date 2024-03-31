@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const Cart = require("../models/cart.js");
 const billingdetails = require("../models/checkout.js");
-const authenticateToken = require("../middleware/index.js");
 const nodemailer = require("nodemailer");
 const request = require("request");
 const { authenticateToken, authenticateAdminToken } = require("../middleware/index.js");
