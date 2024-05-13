@@ -63,7 +63,7 @@ router.get("/:onSale", authenticateAdminToken,async (req, res) => {
     }
   });
   
-router.get("/", authenticateAdminToken,async (req, res) => {
+router.get("/",async (req, res) => {
     try {
         const allCategories = await category.find();
         res.json({ success: true, categories: allCategories });
