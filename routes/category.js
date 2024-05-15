@@ -24,7 +24,7 @@ router.post("/",authenticateAdminToken, async (req, res) => {
         res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 });
-router.get("/:categoryTitle", authenticateAdminToken,async (req, res) => {
+router.get("/:categoryTitle",async (req, res) => {
     try {
         const categoryTitle = req.params.categoryTitle;
 
@@ -45,7 +45,7 @@ router.get("/:categoryTitle", authenticateAdminToken,async (req, res) => {
     }
 });
 
-router.get("/:onSale", authenticateAdminToken,async (req, res) => {
+router.get("/:onSale",async (req, res) => {
     try {
         const onSale = req.params.onSale;
         let products;
