@@ -18,7 +18,7 @@ router.post("/enablepaymode",authenticateAdminToken, async (req, res) => {
 });
 
 // GET route to get payment method status
-router.get("/enablepaymode",authenticateAdminToken, async (req, res) => {
+router.get("/enablepaymode", async (req, res) => {
   try {
     const enablePayMode = await EnablePayMode.findOne();
     if (!enablePayMode) {
