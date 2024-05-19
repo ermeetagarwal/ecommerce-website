@@ -108,7 +108,7 @@ router.post("/billingdetails", authenticateToken, async (req, res) => {
                         )
                         .join("")}
                 </ul>
-                <p>Total: ${Math.round(userCart.total)}</p>
+                <p>Total: ${Math.round(newBillingDetail.cart[0].total)}</p>
             `,
         };
 
@@ -142,7 +142,7 @@ router.post("/billingdetails", authenticateToken, async (req, res) => {
                         )
                         .join("")}
                 </ul>
-                <p>Total: ${Math.round(userCart.total)}</p>
+                <p>Total: ${Math.round(newBillingDetail.cart[0].total)}</p>
             `,
         };
 
@@ -163,8 +163,8 @@ router.post("/billingdetails", authenticateToken, async (req, res) => {
           const data = {
               key: process.env.PAYU_MERCHANT_KEY,
               txnid: `${orderNo}`,
-              amount: Math.round(userCart.total), // Use total from cartSchema
-              productinfo: userCart.items, // Convert items array to JSON string
+              amount: Math.round(newBillingDetail.cart[0].total), // Use total from cartSchema
+              productinfo: newBillingDetail.cart.items, // Convert items array to JSON string
               firstname: req.body.FirstName,
               email: req.body.Email,
               phone: req.body.Phone,
